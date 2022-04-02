@@ -9,6 +9,7 @@
   ],
   "main": "./dist/vue-table-view-next.umd.js",
   "module": "./dist/vue-table-view-next.es.js",
+  "types": "./types",
   "exports": {
     ".": {
       "import": "./dist/vue-table-view-next.es.js",
