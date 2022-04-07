@@ -28,7 +28,7 @@ export const FormItemComponent = <
         type: Object as PropType<Dictionary>,
         default: () => ({}),
       },
-      value: {
+      modelValue: {
         type: [String, Number, Array, Object],
         default: "",
       },
@@ -41,7 +41,8 @@ export const FormItemComponent = <
         default: false,
       },
     },
-    setup(props) {
+    emits: ["update:model-value"],
+    setup(props, { emit }) {
       const currentValue = ref<unknown | unknown[]>(null);
       const componentName = ref();
 
@@ -79,10 +80,8 @@ export const FormItemComponent = <
           break;
       }
 
-      const emits = defineEmits(["input"]);
-
       watch(
-        () => props.value,
+        () => props.modelValue,
         (val) => {
           currentValue.value = val;
         },
@@ -92,7 +91,7 @@ export const FormItemComponent = <
       );
 
       watch(currentValue, (val) => {
-        emits("input", val);
+        emit("update:model-value", val);
       });
 
       return () => (
@@ -119,11 +118,13 @@ export const FormItemComponent = <
             ) : (
               <componentName.value
                 ref="component"
-                v-model={currentValue.value}
+                model-value={currentValue.value}
                 is={componentName.value}
-                // @ts-ignore
                 info={props.info}
                 instance-value={props.instanceValue}
+                onUpdate:model-value={(val: unknown) =>
+                  (currentValue.value = val)
+                }
               />
             )}
           </ElTooltip>

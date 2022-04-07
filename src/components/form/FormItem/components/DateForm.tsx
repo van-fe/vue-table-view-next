@@ -14,6 +14,7 @@ export default defineComponent({
       currentValue,
       info: currInfo,
       placeholder,
+      setCurrentValue,
     } = new FormMixin(props);
     init();
 
@@ -33,7 +34,7 @@ export default defineComponent({
 
     return (
       <ElDatePicker
-        v-model={currentValue}
+        model-value={currentValue}
         class="full-width"
         type={type.value}
         allow-clear={true}
@@ -41,39 +42,8 @@ export default defineComponent({
         value-format={format.value}
         format={format.value}
         picker-options={info.extraConfig?.pickerOptions || {}}
+        onUpdate:model-value={setCurrentValue}
       />
     );
   },
 });
-
-// defineComponent({
-//   name: "DateForm",
-//   mixins: [FormMixin<BaseFormType.DatePicker | BaseFormType.DateTimePicker>()],
-//   computed: {
-//     type() {
-//       return this.info.type === BaseFormType.DateTimePicker
-//         ? "datetime"
-//         : "date";
-//     },
-//     format() {
-//       return this.info.extraConfig?.format ?? "YYYY-MM-DD HH:mm";
-//     },
-//     currentPlaceholder() {
-//       return this.placeholder ?? "选择日期时间";
-//     },
-//   },
-//   render() {
-//     return (
-//       <ElDatePicker
-//         v-model={this.currentValue}
-//         class="full-width"
-//         type={this.type}
-//         allow-clear={true}
-//         placeholder={this.currentPlaceholder}
-//         value-format={this.format}
-//         format={this.format}
-//         picker-options={this.info.extraConfig?.pickerOptions || {}}
-//       />
-//     );
-//   },
-// });

@@ -1,26 +1,23 @@
 import type { Config, Dictionary } from "../../config";
-import type { Ref } from "vue";
-import { defineComponent, defineEmits, inject, ref } from "vue";
+import { defineComponent, inject, ref } from "vue";
 import { AdvancedSearch } from "./AdvancedSearch";
 
 export const TableViewHeader = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "TableViewHeader",
-    setup() {
+    emits: ["do-search", "do-reset"],
+    setup(props, { emit }) {
       const advancedSearchRef = ref<typeof AdvancedSearch | null>(null);
-      const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
-
-      const emits = defineEmits(["do-search", "do-reset"]);
-
+      const currentConfig = inject<Config<Row, Search>>("currentConfig");
       const Tag = AdvancedSearch<Row, Search>();
 
       return () => (
         <div class="table-view__header">
-          {currentConfig?.value.useAdvancedSearch === false ? undefined : (
+          {currentConfig?.useAdvancedSearch === false ? undefined : (
             <Tag
               ref={advancedSearchRef}
-              on-do-search={() => emits("do-search")}
-              on-do-reset={() => emits("do-reset")}
+              on-do-search={() => emit("do-search")}
+              on-do-reset={() => emit("do-reset")}
             />
           )}
           <div class="table-view__header-toolbar" />

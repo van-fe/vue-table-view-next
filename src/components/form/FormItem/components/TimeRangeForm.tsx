@@ -13,6 +13,7 @@ export default defineComponent({
       currentValue,
       info: currInfo,
       placeholder,
+      setCurrentValue,
     } = new FormMixin(props);
     init();
 
@@ -26,42 +27,15 @@ export default defineComponent({
 
     return (
       <ElTimePicker
-        v-model={currentValue}
+        model-value={currentValue}
         class="full-width"
         is-range={true}
         value-format={format.value}
         format={format.value}
         start-placeholder={currentPlaceholder.value[0]}
         end-placeholder={currentPlaceholder.value[1]}
+        onUpdate:model-value={setCurrentValue}
       />
     );
   },
 });
-
-// defineComponent({
-//   name: "TimeRangeForm",
-//   mixins: [FormMixin<BaseFormType.TimeRangePicker>()],
-//   computed: {
-//     format() {
-//       return this.info.extraConfig?.format ?? "HH:mm";
-//     },
-//     currentPlaceholder() {
-//       return this.placeholder
-//         ? (this.placeholder as unknown as [string, string])
-//         : ["Start", "End"];
-//     },
-//   },
-//   render() {
-//     return (
-//       <ElTimePicker
-//         v-model={this.currentValue}
-//         class="full-width"
-//         is-range={true}
-//         value-format={this.format}
-//         format={this.format}
-//         start-placeholder={this.currentPlaceholder[0]}
-//         end-placeholder={this.currentPlaceholder[1]}
-//       />
-//     );
-//   },
-// });

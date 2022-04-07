@@ -8,13 +8,13 @@ import { FormItemComponent } from "../form";
 export const AdvancedSearch = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "AdvancedSearch",
-    setup() {
+    emits: ["do-search"],
+    setup(props, { emit }) {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const paginationInfo = inject<Ref<PaginationData>>("paginationInfo");
       const defaultRequestParams = reactive<Dictionary>({});
       const search = ref<Dictionary>({});
       const isExpand = ref(false);
-      const emits = defineEmits(["do-search"]);
 
       isExpand.value = !(currentConfig?.value.advancedSearchNeedExpand ?? true);
       createDefaultRequestParams();
@@ -44,10 +44,13 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
                 offset={item.colOffset || 0}
               >
                 <Tag
-                  v-model={search!.value[item.field]}
+                  model-value={search!.value[item.field]}
                   info={item}
                   instance-value={search!.value}
                   label-col={item.labelWidth ?? "auto"}
+                  onUpdate:model-value={(val) =>
+                    (search!.value[item.field] = val)
+                  }
                 />
               </ElCol>
             );
@@ -93,7 +96,7 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
       function doReset(): boolean {
         search.value = cloneDeep(defaultRequestParams);
         if (currentConfig?.value.getListAfterReset) {
-          emits("do-search", search);
+          emit("do-search", search);
         }
         return true;
       }
@@ -104,23 +107,26 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
             class={isExpand.value ? "expanded" : "collapsed"}
             label-width="120px"
             label-suffix=":"
+            size="small"
             on-submit={withModifiers(doSearch, ["prevent"])}
           >
             <ElCol span={16} class={["search-form__wrapper"]}>
               {...createSearchFormItems(3)}
             </ElCol>
             <ElCol span={6} offset={2} class="search-button__wrapper">
-              {currentConfig?.value.advancedSearchNeedExpand ? (
+              {currentConfig!.value.advancedSearchNeedExpand ? (
                 <ElButton type="text" on-click={doExpand}>
-                  {currentConfig?.value.expandButtonText}
+                  {currentConfig!.value.expandButtonText}
                   <i class="dropdown el-icon-arrow-down el-icon--right" />
                 </ElButton>
-              ) : undefined}
+              ) : (
+                ""
+              )}
               <ElButton type="primary" native-type="submit" size="small">
-                {currentConfig?.value.searchButtonText}
+                {currentConfig!.value.searchButtonText}
               </ElButton>
               <ElButton size="small" on-click={doReset}>
-                {currentConfig?.value.resetSearchButtonText}
+                {currentConfig!.value.resetSearchButtonText}
               </ElButton>
             </ElCol>
           </ElForm>

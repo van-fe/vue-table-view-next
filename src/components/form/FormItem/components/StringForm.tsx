@@ -13,6 +13,7 @@ export default defineComponent({
       currentValue,
       info: currInfo,
       placeholder,
+      setCurrentValue,
     } = new FormMixin(props);
     init();
 
@@ -20,12 +21,13 @@ export default defineComponent({
 
     return (
       <ElInput
-        v-model={currentValue}
+        model-value={currentValue as string}
         type={info!.type}
         placeholder={placeholder}
         allow-clear={true}
         suffix-icon={info!.extraConfig?.suffixIcon}
         prefix-icon={info!.extraConfig?.prefixIcon}
+        onUpdate:model-value={setCurrentValue}
       />
     );
   },

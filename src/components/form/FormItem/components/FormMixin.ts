@@ -3,7 +3,6 @@ import { computed, defineComponent, reactive, ref, watch } from "vue";
 import type { Dictionary } from "../../../../config";
 import type EditForm from "../../../../config/create";
 import type AdvancedSearch from "../../../../config/advancedSearch";
-import "@vue/shared";
 import { cloneDeep } from "lodash-es";
 
 export const FormMixinsProps = {
@@ -22,117 +21,14 @@ export const FormMixinsProps = {
   },
 };
 
-// const FormMixins = <
-//   Type extends BaseFormType = BaseFormType,
-//   Row extends Dictionary = Dictionary,
-//   Search extends Dictionary = Dictionary
-// >() =>
-//   defineComponent({
-//     name: "FormBase",
-//     props: {
-//       info: {
-//         type: Object as PropType<
-//           EditForm<Row, Type> | AdvancedSearch<Search, Row, Type>
-//         >,
-//         required: true,
-//       },
-//       instanceValue: {
-//         type: Object as PropType<Row | Search>,
-//         required: true,
-//       },
-//       value: {
-//         type: [Object, Array, String, Number],
-//         required: true,
-//         default: "",
-//       },
-//     },
-//     data() {
-//       return {
-//         currentValue: "" as unknown,
-//         comparedDataInstance: {},
-//         hasFormatValue: false,
-//       };
-//     },
-//     computed: {
-//       placeholder() {
-//         if (this.info && typeof this.info.placeholder !== "undefined") {
-//           if (typeof this.info.placeholder === "function") {
-//             return this.info.placeholder(this.instanceValue as Row);
-//           } else {
-//             return this.info.placeholder === true
-//               ? this.info.title
-//               : (this.info.placeholder as string);
-//           }
-//         } else {
-//           return "";
-//         }
-//       },
-//       disabled() {
-//         return this.info.disabled === undefined
-//           ? false
-//           : typeof this.info.disabled === "function"
-//           ? this.info.disabled(this.currentValue, this.instanceValue as any)
-//           : this.info.disabled;
-//       },
-//       comparedData: {
-//         get() {
-//           return this.comparedDataInstance;
-//         },
-//         set(val: Dictionary) {
-//           if (
-//             JSON.stringify(val) !== JSON.stringify(this.comparedDataInstance)
-//           ) {
-//             this.comparedDataInstance = Object.assign({}, val);
-//           }
-//         },
-//       },
-//     },
-//     watch: {
-//       currentValue(val: unknown) {
-//         this.afterCurrentValueChanged();
-//         this.$emit("input", val);
-//       },
-//       value(val: unknown | null) {
-//         this.afterValueChanged();
-//         this.setValue(val);
-//       },
-//       instanceValue: {
-//         handler(val: Dictionary) {
-//           this.comparedData = val;
-//         },
-//       },
-//     },
-//     created() {
-//       this.setValue();
-//     },
-//     methods: {
-//       noticeInit() {},
-//       noticeHide() {},
-//       afterValueChanged() {},
-//       afterCurrentValueChanged() {},
-//       setValue(val: unknown | null = null): void {
-//         if (
-//           !this.hasFormatValue &&
-//           this.info &&
-//           typeof this.info?.beforeLoad === "function"
-//         ) {
-//           this.currentValue = this.info.beforeLoad(this.value);
-//           this.hasFormatValue = true;
-//         } else {
-//           this.currentValue = val ?? this.value;
-//         }
-//       },
-//     },
-//   });
-
 export default defineComponent({
   name: "FormMixin",
   props: FormMixinsProps,
-  setup(props) {
+  emits: ["update:modelValue"],
+  setup(props, { emit }) {
     const currentValue = ref<null | unknown>(null);
     let comparedDataInstance = reactive<Dictionary>({});
     const hasFormatValue = ref(false);
-    const emits = defineEmits(["input"]);
 
     const placeholder = computed(() => {
       if (props.info && typeof props.info.placeholder !== "undefined") {
@@ -181,7 +77,7 @@ export default defineComponent({
       },
       currentValue: (val: any) => {
         callbackFunc.afterCurrentValueChanged();
-        emits("input", val);
+        emit("update:modelValue", val);
       },
       instanceValue: (val: Dictionary) => {
         comparedData.value = val;

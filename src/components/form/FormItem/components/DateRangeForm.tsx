@@ -14,6 +14,7 @@ export default defineComponent({
       currentValue,
       info: currInfo,
       placeholder,
+      setCurrentValue,
     } = new FormMixin(props);
     init();
 
@@ -36,7 +37,7 @@ export default defineComponent({
 
     return (
       <ElDatePicker
-        v-model={currentValue}
+        model-value={currentValue}
         class="full-width"
         type={type.value}
         allow-clear={true}
@@ -46,50 +47,8 @@ export default defineComponent({
         range-separator={info.extraConfig?.rangeSeparator || "~"}
         value-format={format.value}
         format={format.value}
+        onUpdate:model-value={setCurrentValue}
       />
     );
   },
 });
-
-// export default defineComponent({
-//   name: "DateRangeForm",
-//   mixins: [
-//     FormMixin<
-//       BaseFormType.DateRangePicker | BaseFormType.DateTimeRangePicker
-//     >(),
-//   ],
-//   computed: {
-//     showTime() {
-//       return this.info.type === BaseFormType.DateTimeRangePicker;
-//     },
-//     format() {
-//       return this.info.extraConfig?.format ?? "YYYY-MM-DD HH:mm";
-//     },
-//     pickerType() {
-//       return this.info.type === BaseFormType.DateRangePicker
-//         ? "daterange"
-//         : "datetimerange";
-//     },
-//     currentPlaceholder() {
-//       return this.placeholder
-//         ? (this.placeholder as unknown as string[])
-//         : ["Start", "End"];
-//     },
-//   },
-//   render() {
-//     return (
-//       <ElDatePicker
-//         v-model={this.currentValue}
-//         class="full-width"
-//         type={this.pickerType}
-//         allow-clear={true}
-//         show-time={this.showTime}
-//         start-placeholder={this.currentPlaceholder[0]}
-//         end-placeholder={this.currentPlaceholder[1]}
-//         range-separator={this.info.extraConfig?.rangeSeparator || "~"}
-//         value-format={this.format}
-//         format={this.format}
-//       />
-//     );
-//   },
-// });

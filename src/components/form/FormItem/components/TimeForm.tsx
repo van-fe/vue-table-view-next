@@ -13,6 +13,7 @@ export default defineComponent({
       currentValue,
       info: currInfo,
       placeholder,
+      setCurrentValue,
     } = new FormMixin(props);
     init();
 
@@ -24,36 +25,13 @@ export default defineComponent({
 
     return (
       <ElTimePicker
-        v-model={currentValue}
+        model-value={currentValue}
         class="full-width"
         placeholder={currentPlaceholder.value}
         value-format={format.value}
         format={format.value}
+        onUpdate:model-value={setCurrentValue}
       />
     );
   },
 });
-
-// defineComponent({
-//   name: "TimeForm",
-//   mixins: [FormMixin<BaseFormType.TimePicker>()],
-//   computed: {
-//     format() {
-//       return this.info.extraConfig?.format ?? "HH:mm";
-//     },
-//     currentPlaceholder() {
-//       return this.placeholder ? (this.placeholder as string) : "Please Choose";
-//     },
-//   },
-//   render() {
-//     return (
-//       <ElTimePicker
-//         v-model={this.currentValue}
-//         class="full-width"
-//         placeholder={this.currentPlaceholder}
-//         value-format={this.format}
-//         format={this.format}
-//       />
-//     );
-//   },
-// });

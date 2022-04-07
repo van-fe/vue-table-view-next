@@ -18,6 +18,7 @@ export default defineComponent({
       currentValue,
       info: currInfo,
       placeholder,
+      setCurrentValue,
     } = new FormMixin(props);
     init();
 
@@ -39,13 +40,14 @@ export default defineComponent({
 
     return (
       <ElSelectV2
-        v-model={currentValue}
+        model-value={currentValue}
         multiple={info.extraConfig?.multiple || false}
         placeholder={placeholder}
         allow-clear={true}
         class="full-width"
         filterable={info.extraConfig?.filterable || false}
         loading={loading.value}
+        onUpdate:model-value={setCurrentValue}
       >
         {selectData.value.map((item) => (
           <ElOption key={item.label} value={item.value} label={item.label}>
@@ -56,43 +58,3 @@ export default defineComponent({
     );
   },
 });
-
-// defineComponent({
-//   name: "SelectForm",
-//   mixins: [FormMixin<BaseFormType.Select>()],
-//   data() {
-//     return {
-//       selectData: [] as SelectData[],
-//       loading: false,
-//     };
-//   },
-//   watch: {
-//     "info.extraConfig": {
-//       immediate: true,
-//       async handler(val: AdvancedSearchSelectExtra) {
-//         if (val.selectData) {
-//           this.selectData = val.selectData;
-//         }
-//       },
-//     },
-//   },
-//   render(): VNode {
-//     return (
-//       <ElSelectV2
-//         v-model={this.currentValue}
-//         multiple={this.info.extraConfig?.multiple || false}
-//         placeholder={this.placeholder}
-//         allow-clear={true}
-//         class="full-width"
-//         filterable={this.info.extraConfig?.filterable || false}
-//         loading={this.loading}
-//       >
-//         {this.selectData.map((item) => (
-//           <ElOption key={item.label} value={item.value} label={item.label}>
-//             {item.label}
-//           </ElOption>
-//         ))}
-//       </ElSelectV2>
-//     );
-//   },
-// });
