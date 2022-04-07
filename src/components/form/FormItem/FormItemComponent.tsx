@@ -1,20 +1,31 @@
 import type { PropType } from "vue";
-import { computed, defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
+import type { Dictionary } from "../../../config";
 import { BaseFormType } from "../../../config";
 import FormItems from "./components";
 import type EditForm from "../../../config/create";
 import { ElTooltip, ElFormItem } from "element-plus";
+import type AdvancedSearch from "../../../config/advancedSearch";
 
-export const FormItemComponent = <Row,>() =>
+export const FormItemComponent = <
+  Row extends Dictionary = Dictionary,
+  Search extends Dictionary = Dictionary
+>() =>
   defineComponent({
     name: "FormItemComponent",
+    components: {
+      ...FormItems,
+    },
     props: {
       info: {
-        type: Object as PropType<EditForm<Row, BaseFormType>>,
+        type: Object as PropType<
+          | EditForm<Row, BaseFormType>
+          | AdvancedSearch<Search, Row, BaseFormType>
+        >,
         required: true,
       },
-      data: {
-        type: Object as PropType<Record<string, unknown>>,
+      instanceValue: {
+        type: Object as PropType<Dictionary>,
         default: () => ({}),
       },
       value: {
@@ -32,38 +43,46 @@ export const FormItemComponent = <Row,>() =>
     },
     setup(props) {
       const currentValue = ref<unknown | unknown[]>(null);
-      const componentName = computed(() => {
-        switch (props.info.type) {
-          case BaseFormType.String:
-          case BaseFormType.Textarea:
-          default:
-            return FormItems.StringForm;
-          case BaseFormType.Number:
-            return FormItems.NumberForm;
-          case BaseFormType.Select:
-            return FormItems.SelectForm;
-          case BaseFormType.DatePicker:
-          case BaseFormType.DateTimePicker:
-            return FormItems.DateForm;
-          case BaseFormType.TimePicker:
-            return FormItems.TimeForm;
-          case BaseFormType.Cascader:
-            return FormItems.CascaderForm;
-          case BaseFormType.DateRangePicker:
-          case BaseFormType.DateTimeRangePicker:
-            return FormItems.DateRangeForm;
-          case BaseFormType.TimeRangePicker:
-            return FormItems.TimeRangeForm;
-          case BaseFormType.RemoteSearch:
-            return FormItems.RemoteSelectForm;
-        }
-      });
+      const componentName = ref();
+
+      switch (props.info.type) {
+        case BaseFormType.String:
+        case BaseFormType.Textarea:
+        default:
+          componentName.value = FormItems.StringForm;
+          break;
+        case BaseFormType.Number:
+          componentName.value = FormItems.NumberForm;
+          break;
+        case BaseFormType.Select:
+          componentName.value = FormItems.SelectForm;
+          break;
+        case BaseFormType.DatePicker:
+        case BaseFormType.DateTimePicker:
+          componentName.value = FormItems.DateForm;
+          break;
+        case BaseFormType.TimePicker:
+          componentName.value = FormItems.TimeForm;
+          break;
+        case BaseFormType.Cascader:
+          componentName.value = FormItems.CascaderForm;
+          break;
+        case BaseFormType.DateRangePicker:
+        case BaseFormType.DateTimeRangePicker:
+          componentName.value = FormItems.DateRangeForm;
+          break;
+        case BaseFormType.TimeRangePicker:
+          componentName.value = FormItems.TimeRangeForm;
+          break;
+        case BaseFormType.RemoteSearch:
+          componentName.value = FormItems.RemoteSelectForm;
+          break;
+      }
 
       const emits = defineEmits(["input"]);
 
       watch(
-        // @ts-ignore
-        props.value,
+        () => props.value,
         (val) => {
           currentValue.value = val;
         },
@@ -82,13 +101,11 @@ export const FormItemComponent = <Row,>() =>
           required={props.required}
           prop={props.info.field}
         >
-          <ElTooltip placement="top-start">
-            {props.info.tooltipText ? (
-              // @ts-ignore
-              <template slot="content">
-                <span v-html={props.info.tooltipText} />
-              </template>
-            ) : undefined}
+          <ElTooltip
+            placement="top-start"
+            content={props.info?.tooltipText}
+            raw-content
+          >
             {props.isQuickView ? (
               <template>
                 {[
@@ -103,9 +120,10 @@ export const FormItemComponent = <Row,>() =>
               <componentName.value
                 ref="component"
                 v-model={currentValue.value}
+                is={componentName.value}
                 // @ts-ignore
                 info={props.info}
-                data={props.data}
+                instance-value={props.instanceValue}
               />
             )}
           </ElTooltip>

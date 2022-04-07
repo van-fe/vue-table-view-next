@@ -21,7 +21,7 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
       search.value = mergeRequestParams(false);
 
       function createSearchFormItems(chunkIn = 2): VNode[] {
-        const Tag = FormItemComponent();
+        const Tag = FormItemComponent<Row, Search>();
         const chunks: VNode[][] = [];
         let tempChunks: VNode[] = [];
         const defaultSpan = 24 / chunkIn;
@@ -44,10 +44,9 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
                 offset={item.colOffset || 0}
               >
                 <Tag
-                  v-model={search?.value[item.field]}
-                  // @ts-ignore
+                  v-model={search!.value[item.field]}
                   info={item}
-                  data={search?.value}
+                  instance-value={search!.value}
                   label-col={item.labelWidth ?? "auto"}
                 />
               </ElCol>

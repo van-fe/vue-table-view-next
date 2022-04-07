@@ -1,6 +1,6 @@
 {
   "name": "vue-table-view-next",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.3",
   "files": [
     "dist",
     "types",
@@ -18,7 +18,8 @@
     "./style": "./dist/style.css"
   },
   "scripts": {
-    "build": "pnpm run build:types && vite build",
+    "build": "pnpm run build:types && pnpm run build:files",
+    "build:files": "vite build",
     "build:types": "rm -rf types && vue-tsc -d --emitDeclarationOnly --declarationDir ./types"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "@vitejs/plugin-vue-jsx": "^1.3.9",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^10.0.0",
+    "@vue/shared": "^3.2.31",
     "eslint": "^8.12.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^2.7.0",
@@ -54,7 +56,7 @@
     "unplugin-auto-import": "^0.6.8",
     "unplugin-element-plus": "^0.3.3",
     "unplugin-vue-components": "^0.18.5",
-    "vite": "^2.9.0",
+    "vite": "^2.9.1",
     "vite-plugin-style-import": "^1.4.1",
     "vue-tsc": "^0.29.8"
   }

@@ -22,13 +22,14 @@ export interface AdvancedSearchExtraMap<Row> {
 }
 
 export default interface AdvancedSearch<
-  Search,
-  Row,
+  Search extends Dictionary = Dictionary,
+  Row extends Dictionary = Dictionary,
   Type extends keyof AdvancedSearchExtraMap<Row> = BaseFormType
 > {
   field: keyof Search & string;
   title: string;
   type: Type;
+  tooltipText?: string;
   default: unknown;
   placeholder?: boolean | string | [string, string]; // if true, same as title
   clearable?: boolean; // true
@@ -37,6 +38,10 @@ export default interface AdvancedSearch<
   colOffset?: number;
   labelWidth?: string;
   extraConfig?: AdvancedSearchExtraMap<Row>[Type];
+  beforeLoad: never;
+  listenFieldsToSearch: never;
+  listenFieldsChangeToReset: never;
+  defaultValueSearchFunc: never;
 }
 
 /**

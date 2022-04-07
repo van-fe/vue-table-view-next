@@ -1,10 +1,11 @@
 import type { SelectData } from "./select";
 import type { CascaderData } from "./cascader";
 import type { VNode } from "vue";
-import type { BaseFormType } from "./common";
+import type { BaseFormType, Dictionary } from "./common";
 import type {
   AdvancedSearchDateTimePickerExtra,
   AdvancedSearchDateTimeRangePickerExtra,
+  AdvancedSearchDisabled,
   AdvancedSearchSelectExtra,
   AdvancedSearchStringExtra,
 } from "./advancedSearch";
@@ -24,8 +25,10 @@ export interface EditFormExtraMap<Row> {
   "date-time-range-picker": EditFormDateTimeRangePickerExtra;
 }
 
+export type EditFormDisabled<Row> = AdvancedSearchDisabled<Row>;
+
 export default interface EditForm<
-  Row,
+  Row extends Dictionary = Dictionary,
   Type extends keyof EditFormExtraMap<Row> = BaseFormType
 > {
   field: keyof Row & string;
@@ -33,7 +36,7 @@ export default interface EditForm<
   type: Type;
   tooltipText?: string;
   placeholder?: boolean | string | ((value: Row) => string); // if true, same as title
-  disabled?: ((value: unknown, row: Row) => boolean) | boolean;
+  disabled?: EditFormDisabled<Row>;
   listenFieldsToSearch?: string[];
   listenFieldsChangeToReset?: string[];
   defaultValueSearchFunc?: (val: unknown) => Promise<SelectData | undefined>;
