@@ -1,8 +1,7 @@
 import FormMixin, { FormMixinsProps } from "./FormMixin";
 import { ElInput } from "element-plus";
 import { defineComponent } from "vue";
-import type EditForm from "../../../../config/create";
-import type { BaseFormType, Dictionary } from "../../../../config";
+import type { EditForm, BaseFormType, Dictionary } from "@/config";
 
 export default defineComponent({
   name: "StringForm",
@@ -14,16 +13,16 @@ export default defineComponent({
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = new FormMixin(props);
+    } = FormMixin(props);
     init();
 
     const info = currInfo as EditForm<Dictionary, BaseFormType.String>;
 
     return (
       <ElInput
-        model-value={currentValue as string}
+        model-value={currentValue.value}
         type={info!.type}
-        placeholder={placeholder}
+        placeholder={placeholder.value}
         allow-clear={true}
         suffix-icon={info!.extraConfig?.suffixIcon}
         prefix-icon={info!.extraConfig?.prefixIcon}

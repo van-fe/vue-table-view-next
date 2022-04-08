@@ -1,9 +1,8 @@
 import FormMixin, { FormMixinsProps } from "./FormMixin";
 import { computed, defineComponent } from "vue";
-import type { Dictionary } from "../../../../config";
-import { BaseFormType } from "../../../../config";
+import type { Dictionary, EditForm } from "@/config";
+import { BaseFormType } from "@/config";
 import { ElDatePicker } from "element-plus";
-import type EditForm from "../../../../config/create";
 
 export default defineComponent({
   name: "DateRangeForm",
@@ -15,7 +14,7 @@ export default defineComponent({
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = new FormMixin(props);
+    } = FormMixin(props);
     init();
 
     const info = currInfo as EditForm<
@@ -37,7 +36,7 @@ export default defineComponent({
 
     return (
       <ElDatePicker
-        model-value={currentValue}
+        model-value={currentValue.value}
         class="full-width"
         type={type.value}
         allow-clear={true}

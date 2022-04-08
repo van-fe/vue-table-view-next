@@ -1,6 +1,6 @@
-import type { Config, Dictionary } from "../../config";
+import type { Config, Dictionary } from "@/config";
 import { defineComponent, inject, ref } from "vue";
-import { AdvancedSearch } from "./AdvancedSearch";
+import { AdvancedSearch } from "@/components";
 
 export const TableViewHeader = <Row, Search extends Dictionary>() =>
   defineComponent({

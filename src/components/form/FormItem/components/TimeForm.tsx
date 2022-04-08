@@ -1,8 +1,7 @@
 import FormMixin, { FormMixinsProps } from "./FormMixin";
 import { computed, defineComponent } from "vue";
-import type { BaseFormType, Dictionary } from "../../../../config";
+import type { BaseFormType, Dictionary, EditForm } from "@/config";
 import { ElTimePicker } from "element-plus";
-import type EditForm from "../../../../config/create";
 
 export default defineComponent({
   name: "TimeForm",
@@ -14,18 +13,18 @@ export default defineComponent({
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = new FormMixin(props);
+    } = FormMixin(props);
     init();
 
     const info = currInfo as EditForm<Dictionary, BaseFormType.TimePicker>;
     const format = computed(() => info.extraConfig?.format ?? "HH:mm");
-    const currentPlaceholder = computed(() =>
-      placeholder ? (placeholder as string) : "Please Choose"
+    const currentPlaceholder = computed(
+      () => placeholder.value || "Please Choose"
     );
 
     return (
       <ElTimePicker
-        model-value={currentValue}
+        model-value={currentValue.value}
         class="full-width"
         placeholder={currentPlaceholder.value}
         value-format={format.value}

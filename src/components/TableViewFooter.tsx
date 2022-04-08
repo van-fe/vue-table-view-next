@@ -1,4 +1,4 @@
-import type { Config, PaginationData, Dictionary } from "../config";
+import type { Config, PaginationData, Dictionary } from "@/config";
 import type { Ref } from "vue";
 import { ElPagination } from "element-plus";
 import { defineComponent, inject } from "vue";
@@ -31,7 +31,12 @@ export const TableViewFooter = <Row, Search extends Dictionary>() =>
       }
 
       return () => (
-        <div class="table-view__footer">
+        <div
+          class={[
+            "table-view__footer",
+            currentConfig?.value.paginationPosition,
+          ]}
+        >
           {currentConfig?.value.needPagination === false ? (
             ""
           ) : (
@@ -43,8 +48,9 @@ export const TableViewFooter = <Row, Search extends Dictionary>() =>
                 page-count={paginationInfo?.value.pageAmount}
                 page-sizes={currentConfig?.value.requestPageConfig?.pageSizes}
                 layout="total, prev, pager, next, sizes, jumper"
-                on-current-change={onCurrentChange}
-                on-size-change={onSizeChange}
+                {...currentConfig?.value.paginationComponentProps}
+                onUpdate:current-page={onCurrentChange}
+                onUpdate:page-size={onSizeChange}
               />
             </div>
           )}

@@ -1,5 +1,5 @@
-import { AvailableLanguage } from "../config";
-import type { GlobalConfigType, InsideGlobalConfig } from "../config";
+import { AvailableLanguage } from "@/config";
+import type { GlobalConfigType, InsideGlobalConfig } from "@/config";
 import { merge } from "lodash-es";
 
 class GlobalConfig {
@@ -8,6 +8,7 @@ class GlobalConfig {
     stripe: true,
     border: false,
     round: false,
+    size: "medium",
     searchButtonText: "搜索",
     resetSearchButtonText: "清空",
     expandButtonText: "展开",
@@ -32,6 +33,7 @@ class GlobalConfig {
     operationConfig: {
       headerTitle: "操作",
     },
+    paginationPosition: "center",
   };
 
   public get globalConfig(): InsideGlobalConfig {

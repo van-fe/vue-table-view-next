@@ -1,9 +1,10 @@
-import type { Config, Dictionary, PaginationData } from "../../config";
+import type { Config, Dictionary, PaginationData } from "@/config";
 import type { Ref, VNode } from "vue";
 import { defineComponent, inject, reactive, ref, withModifiers } from "vue";
 import { cloneDeep } from "lodash-es";
-import { ElCol, ElButton, ElForm } from "element-plus";
-import { FormItemComponent } from "../form";
+import { ElCol, ElButton, ElForm, ElIcon } from "element-plus";
+import { FormItemComponent } from "@/components/form";
+import { ArrowDown } from "@element-plus/icons-vue";
 
 export const AdvancedSearch = <Row, Search extends Dictionary>() =>
   defineComponent({
@@ -67,7 +68,7 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
       function createDefaultRequestParams(): void {
         if (Object.keys(defaultRequestParams).length === 0) {
           currentConfig?.value.advancedSearch?.forEach((item) => {
-            defaultRequestParams[item.field] = item.default;
+            defaultRequestParams[item.field] = item.default || null;
           });
         }
       }
@@ -117,7 +118,9 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
               {currentConfig!.value.advancedSearchNeedExpand ? (
                 <ElButton type="text" on-click={doExpand}>
                   {currentConfig!.value.expandButtonText}
-                  <i class="dropdown el-icon-arrow-down el-icon--right" />
+                  <ElIcon class="el-icon--right">
+                    <ArrowDown />
+                  </ElIcon>
                 </ElButton>
               ) : (
                 ""

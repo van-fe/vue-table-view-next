@@ -10,6 +10,7 @@ specifiers:
   '@vitejs/plugin-vue-jsx': ^1.3.9
   '@vue/eslint-config-prettier': ^7.0.0
   '@vue/eslint-config-typescript': ^10.0.0
+  '@vue/shared': ^3.2.31
   element-plus: ^2.1.8
   eslint: ^8.12.0
   eslint-config-prettier: ^8.5.0
@@ -52,6 +53,7 @@ devDependencies:
   '@vitejs/plugin-vue-jsx': registry.npmmirror.com/@vitejs/plugin-vue-jsx/1.3.9
   '@vue/eslint-config-prettier': registry.npmmirror.com/@vue/eslint-config-prettier/7.0.0_eslint@8.12.0+prettier@2.6.1
   '@vue/eslint-config-typescript': registry.npmmirror.com/@vue/eslint-config-typescript/10.0.0_472ac59a1665d7276ffa7649fe6f1d6e
+  '@vue/shared': 3.2.31
   eslint: registry.npmmirror.com/eslint/8.12.0
   eslint-config-prettier: registry.npmmirror.com/eslint-config-prettier/8.5.0_eslint@8.12.0
   eslint-import-resolver-typescript: registry.npmmirror.com/eslint-import-resolver-typescript/2.7.0_dae71b730d6620b67a20047a747b2eda

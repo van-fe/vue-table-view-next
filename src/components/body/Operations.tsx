@@ -1,10 +1,10 @@
-import { OperationType } from "../../config";
+import { OperationType } from "@/config";
 import type {
   Config,
   Dictionary,
   Operation,
   ColumnCallbackParams,
-} from "../../config";
+} from "@/config";
 import type { VNode, Ref } from "vue";
 import {
   ElButton,

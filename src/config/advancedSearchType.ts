@@ -21,7 +21,7 @@ export interface AdvancedSearchExtraMap<Row> {
   "date-time-range-picker": AdvancedSearchDateTimeRangePickerExtra;
 }
 
-export default interface AdvancedSearch<
+export interface AdvancedSearchType<
   Search extends Dictionary = Dictionary,
   Row extends Dictionary = Dictionary,
   Type extends keyof AdvancedSearchExtraMap<Row> = BaseFormType

@@ -5,9 +5,9 @@ import type {
   BaseFormType,
   AdvancedSearchSelectExtra,
   Dictionary,
-} from "../../../../config";
+  EditForm,
+} from "@/config";
 import { ElOption, ElSelectV2 } from "element-plus";
-import type EditForm from "../../../../config/create";
 
 export default defineComponent({
   name: "SelectForm",
@@ -19,7 +19,7 @@ export default defineComponent({
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = new FormMixin(props);
+    } = FormMixin(props);
     init();
 
     const info = currInfo as EditForm<Dictionary, BaseFormType.Select>;
@@ -40,9 +40,9 @@ export default defineComponent({
 
     return (
       <ElSelectV2
-        model-value={currentValue}
+        model-value={currentValue.value}
         multiple={info.extraConfig?.multiple || false}
-        placeholder={placeholder}
+        placeholder={placeholder.value}
         allow-clear={true}
         class="full-width"
         filterable={info.extraConfig?.filterable || false}

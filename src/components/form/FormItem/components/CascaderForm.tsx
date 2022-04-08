@@ -4,14 +4,15 @@ import type {
   BaseFormType,
   CascaderData,
   Dictionary,
-} from "../../../../config";
+  EditForm,
+} from "@/config";
 import { ElCascader, ElMessage } from "element-plus";
-import type EditForm from "../../../../config/create";
 
 export default defineComponent({
   name: "CascaderForm",
   props: FormMixinsProps,
-  async setup(props) {
+  emits: ["update:modelValue"],
+  async setup(props, { emit }) {
     const {
       init,
       currentValue,
@@ -19,10 +20,8 @@ export default defineComponent({
       placeholder,
       watchFunc,
       setCurrentValue,
-    } = new FormMixin(props);
+    } = FormMixin(props);
     init();
-
-    const emits = defineEmits(["update:modelValue"]);
 
     const cascaderOption = ref<CascaderData[]>([]);
     const hasInitOption = ref(false);
@@ -32,14 +31,14 @@ export default defineComponent({
         val = [];
       }
       await checkDynamicLastChildExists(val);
-      emits("update:modelValue", val);
+      emit("update:modelValue", val);
     };
 
     watch(
       cascaderOption,
       async () => {
         if (!hasInitOption.value) {
-          await checkDynamicLastChildExists(currentValue as string[]);
+          await checkDynamicLastChildExists(currentValue.value as string[]);
         }
       },
       {
@@ -113,11 +112,11 @@ export default defineComponent({
 
     return (
       <ElCascader
-        model-value={currentValue}
+        model-value={currentValue.value}
         options={cascaderOption.value}
         expand-trigger="hover"
         change-on-select={false}
-        placeholder={placeholder}
+        placeholder={placeholder.value}
         load-data={loadData}
         onUpdate:model-value={setCurrentValue}
       />

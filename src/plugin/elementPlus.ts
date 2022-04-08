@@ -1,5 +1,4 @@
-import "../styles/theme/index.css";
-import { AvailableLanguage } from "../config";
+import { AvailableLanguage } from "@/config";
 import ElementPlusEnLang from "element-plus/es/locale/lang/en";
 import ElementPlusZhCNLang from "element-plus/es/locale/lang/zh-cn";
 

@@ -1,9 +1,8 @@
 import FormMixin, { FormMixinsProps } from "./FormMixin";
 import { defineComponent, ref, watch } from "vue";
 import { debounce } from "lodash-es";
-import type { SelectData, BaseFormType, Dictionary } from "../../../../config";
+import type { SelectData, BaseFormType, Dictionary, EditForm } from "@/config";
 import { ElOption, ElSelectV2 } from "element-plus";
-import type EditForm from "../../../../config/create";
 
 export default defineComponent({
   name: "RemoteSelectForm",
@@ -19,7 +18,7 @@ export default defineComponent({
       comparedData,
       callbackFunc,
       setCurrentValue,
-    } = new FormMixin(props);
+    } = FormMixin(props);
     init();
 
     const info = currInfo as EditForm<Dictionary, BaseFormType.RemoteSearch>;
@@ -103,14 +102,14 @@ export default defineComponent({
 
     return (
       <ElSelectV2
-        model-value={currentValue}
-        placeholder={placeholder}
+        model-value={currentValue.value}
+        placeholder={placeholder.value}
         allow-clear={true}
         filterable={true}
         remote={true}
         default-first-option={false}
         remote-method={handleSearch}
-        disabled={disabled}
+        disabled={disabled.value}
         onUpdate:model-value={setCurrentValue}
       >
         {...selectData.value.map((item) => {

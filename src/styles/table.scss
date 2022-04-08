@@ -1,4 +1,8 @@
 @import "advanced-search";
+@import "vxe-table/styles/variable";
+@import "vxe-table/styles/header";
+@import "vxe-table/styles/column";
+@import "vxe-table/styles/table";
 
 .table-view {
   display: flex;
@@ -60,6 +64,14 @@
 
     .page__wrapper {
       width: fit-content;
+    }
+
+    &.left {
+      justify-content: flex-start;
+    }
+
+    &.right {
+      justify-content: flex-end;
     }
   }
 }

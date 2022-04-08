@@ -1,13 +1,13 @@
-import type Column from "./column";
-import type AdvancedSearch from "./advancedSearch";
-import type EditForm from "./create";
+import type { Column } from "./column";
+import type { AdvancedSearchType } from "./advancedSearchType";
+import type { EditForm } from "./create";
 import type { ReceivePageFieldConfig, RequestPageFieldConfig } from "./page";
 import type {
   AvailableLanguage,
   CheckboxChangedRecords,
   Dictionary,
 } from "./common";
-import type OperationConfig from "./operation";
+import type { OperationConfig } from "./operation";
 
 export type ListDataWrapper<Row> = {
   [key: string]: number | Row[];
@@ -22,6 +22,7 @@ export interface InsideGlobalConfig {
   stripe: boolean;
   border: boolean;
   round: boolean;
+  size: "medium" | "small" | "mini";
   searchButtonText: string;
   resetSearchButtonText: string;
   expandButtonText: string;
@@ -34,6 +35,8 @@ export interface InsideGlobalConfig {
   requestPageConfig: RequestPageFieldConfig;
   receivePageConfig: ReceivePageFieldConfig;
   operationConfig: OperationConfig<unknown>;
+  paginationPosition: "left" | "right" | "center";
+  paginationComponentProps?: Record<string, unknown>;
 }
 
 export type GlobalConfigType = Partial<InsideGlobalConfig>;
@@ -46,6 +49,7 @@ export interface InsideConfig<Row, Search extends Dictionary> {
   stripe: boolean;
   border: boolean;
   round: boolean;
+  size: "medium" | "small" | "mini";
   needPagination: boolean; // true
   searchButtonText: string; // "搜索"
   resetSearchButtonText: string; // "清空"
@@ -57,6 +61,8 @@ export interface InsideConfig<Row, Search extends Dictionary> {
   needCheckbox: boolean;
   needRadio: boolean;
   needSeq: boolean;
+  paginationPosition: "left" | "right" | "center";
+  paginationComponentProps: Record<string, unknown>;
 
   /**
    * events
@@ -96,7 +102,7 @@ export interface InsideConfig<Row, Search extends Dictionary> {
    */
   useAdvancedSearch: boolean; // true. If you need reuse search page in dialog, this option will help you.
   advancedSearchNeedExpand: boolean; // false
-  advancedSearch: AdvancedSearch<Search, Row>[];
+  advancedSearch: AdvancedSearchType<Search, Row>[];
 }
 
 export type Config<Row, Search extends Dictionary> = Partial<

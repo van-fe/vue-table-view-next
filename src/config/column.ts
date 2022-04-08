@@ -9,7 +9,7 @@ export type ColumnRender<Row> = (curr: any, row: Row) => VNode;
 
 export type ColumnClassNameCallback = (params: ColumnCallbackParams) => string;
 
-export default interface Column<Row> {
+export interface Column<Row> {
   type?: VxeColumnPropTypes.Type; // default
   field: keyof Row & string;
   title: string;

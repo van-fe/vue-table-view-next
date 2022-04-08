@@ -3,12 +3,13 @@ import type {
   Config,
   Dictionary,
   ColumnFormatterParam,
-} from "../../config";
+  Column,
+} from "@/config";
 import type { Ref, Slot, VNode } from "vue";
 import { defineComponent, inject } from "vue";
-import type Column from "../../config/column";
-import { Fixed } from "../../config";
+import { Fixed } from "@/config";
 import { Table as VxeTable, Column as VxeColumn } from "vxe-table";
+import { Operations } from "./Operations";
 
 export const TableViewBody = <Row, Search extends Dictionary>() =>
   defineComponent({
@@ -123,11 +124,14 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
         }
       }
 
+      const OperationsTag = Operations<Row, Search>();
+
       return () => (
         <div class="table-view__body">
           <VxeTable
             height="100%"
             data={dataList?.value}
+            size={currentConfig?.value.size}
             stripe={currentConfig?.value.stripe}
             border={currentConfig?.value.border}
             round={currentConfig?.value.round}
@@ -138,7 +142,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
           >
             {...specialColumnRender()}
             {columnRender()}
-            <operations />
+            <OperationsTag />
           </VxeTable>
         </div>
       );

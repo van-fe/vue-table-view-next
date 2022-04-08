@@ -1,4 +1,4 @@
-import type { GlobalConfigType } from "../config";
+import type { GlobalConfigType } from "@/config";
 
 export function defineVueTableViewGlobalOption(
   config: GlobalConfigType

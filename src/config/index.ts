@@ -1,4 +1,4 @@
-export * from "./advancedSearch";
+export * from "./advancedSearchType";
 export * from "./cascader";
 export * from "./column";
 export * from "./common";

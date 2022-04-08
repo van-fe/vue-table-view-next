@@ -8,7 +8,7 @@ import type {
   AdvancedSearchDisabled,
   AdvancedSearchSelectExtra,
   AdvancedSearchStringExtra,
-} from "./advancedSearch";
+} from "./advancedSearchType";
 
 export interface EditFormExtraMap<Row> {
   string: EditFormStringExtra;
@@ -27,7 +27,7 @@ export interface EditFormExtraMap<Row> {
 
 export type EditFormDisabled<Row> = AdvancedSearchDisabled<Row>;
 
-export default interface EditForm<
+export interface EditForm<
   Row extends Dictionary = Dictionary,
   Type extends keyof EditFormExtraMap<Row> = BaseFormType
 > {

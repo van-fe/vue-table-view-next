@@ -3,9 +3,9 @@ import { defineComponent, onBeforeUnmount, onMounted, provide, ref } from "vue";
 import { TableViewHeader } from "./header";
 import { TableViewBody } from "./body";
 import { TableViewFooter } from "./TableViewFooter";
-import type { Config, Dictionary, PaginationData } from "../config";
+import type { Config, Dictionary, PaginationData } from "@/config";
 import { merge } from "lodash-es";
-import GlobalConfig from "../utils/globalConfig";
+import GlobalConfig from "@/utils/globalConfig";
 
 const TableView = <Row, Search extends Dictionary>() =>
   defineComponent({

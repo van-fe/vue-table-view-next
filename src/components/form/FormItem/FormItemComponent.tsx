@@ -1,11 +1,9 @@
 import type { PropType } from "vue";
 import { defineComponent, ref, watch } from "vue";
-import type { Dictionary } from "../../../config";
-import { BaseFormType } from "../../../config";
+import type { Dictionary, EditForm, AdvancedSearchType } from "@/config";
+import { BaseFormType } from "@/config";
 import FormItems from "./components";
-import type EditForm from "../../../config/create";
 import { ElTooltip, ElFormItem } from "element-plus";
-import type AdvancedSearch from "../../../config/advancedSearch";
 
 export const FormItemComponent = <
   Row extends Dictionary = Dictionary,
@@ -20,7 +18,7 @@ export const FormItemComponent = <
       info: {
         type: Object as PropType<
           | EditForm<Row, BaseFormType>
-          | AdvancedSearch<Search, Row, BaseFormType>
+          | AdvancedSearchType<Search, Row, BaseFormType>
         >,
         required: true,
       },

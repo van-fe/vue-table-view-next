@@ -10,6 +10,18 @@ import * as path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@/': `${path.resolve(__dirname, 'src')}/`,
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@/styles/element-variables.scss" as *;`,
+      },
+    },
+  },
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
@@ -17,7 +29,7 @@ export default defineConfig({
       fileName: (format) => `vue-table-view-next.${format}.js`,
     },
     rollupOptions: {
-      external: ['vue', 'element-plus', 'vxe-table'],
+      external: ['vue', 'element-plus'],
       output: {
         globals: {
           vue: 'Vue',
@@ -34,7 +46,9 @@ export default defineConfig({
     Components({
       resolvers: [ElementPlusResolver()],
     }),
-    ElementPlus(),
+    ElementPlus({
+      useSource: true,
+    }),
     VxeTableResolve(),
   ],
 });

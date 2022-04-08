@@ -36,7 +36,7 @@ export interface Operation<Row> {
   children?: Operation<Row>[];
 }
 
-export default interface OperationConfig<Row> {
+export interface OperationConfig<Row> {
   operations?: Operation<Row>[];
   headerTitle?: string; // "Operation"
   width?: string | number;
