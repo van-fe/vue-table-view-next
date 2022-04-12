@@ -12,7 +12,7 @@ export const TableViewFooter = <Row, Search extends Dictionary>() =>
 
       function onCurrentChange(page: number): void {
         window.dispatchEvent(
-          new CustomEvent("current-page-change", {
+          new CustomEvent("vue-table-view-current-page-change", {
             detail: {
               page,
             },
@@ -22,7 +22,7 @@ export const TableViewFooter = <Row, Search extends Dictionary>() =>
 
       function onSizeChange(size: number): void {
         window.dispatchEvent(
-          new CustomEvent("page-size-change", {
+          new CustomEvent("vue-table-view-page-size-change", {
             detail: {
               size,
             },

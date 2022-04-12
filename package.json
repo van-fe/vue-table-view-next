@@ -21,8 +21,9 @@
     "build": "pnpm run build:types && pnpm run build:files",
     "build:files": "vite build",
     "build:types": "rm -rf types && vue-tsc -d --emitDeclarationOnly --declarationDir ./types",
-    "build-watch": "pnpm run build:types && pnpm run build:files-watch",
-    "build:files-watch": "vite build --watch"
+    "build-watch": "pnpm run build:types & pnpm run build:files-watch",
+    "build:files-watch": "vite build --watch",
+    "build:types-watch": "rm -rf types && tsc -d --emitDeclarationOnly --declarationDir ./types --watch"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",

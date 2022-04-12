@@ -3,6 +3,7 @@
 @import "vxe-table/styles/header";
 @import "vxe-table/styles/column";
 @import "vxe-table/styles/table";
+@import "vxe-table/styles/tooltip";
 
 .table-view {
   display: flex;
@@ -19,7 +20,7 @@
     }
 
     &-toolbar {
-
+      padding-bottom: 10px;
     }
   }
 

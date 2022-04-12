@@ -9,6 +9,7 @@ import type {
   AdvancedSearchSelectExtra,
   AdvancedSearchStringExtra,
 } from "./advancedSearchType";
+import type { FormItemRule } from "element-plus/es/tokens/form";
 
 export interface EditFormExtraMap<Row> {
   string: EditFormStringExtra;
@@ -36,7 +37,11 @@ export interface EditForm<
   type: Type;
   tooltipText?: string;
   placeholder?: boolean | string | ((value: Row) => string); // if true, same as title
+  default: unknown | Function;
+  rule?: FormItemRule | FormItemRule[];
   disabled?: EditFormDisabled<Row>;
+  colSpan?: number;
+  colOffset?: number;
   listenFieldsToSearch?: string[];
   listenFieldsChangeToReset?: string[];
   defaultValueSearchFunc?: (val: unknown) => Promise<SelectData | undefined>;

@@ -1,4 +1,5 @@
-import FormMixin, { FormMixinsProps } from "./FormMixin";
+import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
+import type { Ref } from "vue";
 import { computed, defineComponent } from "vue";
 import type { BaseFormType, Dictionary, EditForm } from "@/config";
 import { ElTimePicker } from "element-plus";
@@ -6,25 +7,28 @@ import { ElTimePicker } from "element-plus";
 export default defineComponent({
   name: "TimeRangeForm",
   props: FormMixinsProps,
-  setup(props) {
+  emits: FormMixinsEmits,
+  setup(props, ctx) {
     const {
       init,
       currentValue,
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = FormMixin(props);
+    } = FormMixin(props, ctx);
     init();
 
-    const info = currInfo as EditForm<Dictionary, BaseFormType.TimeRangePicker>;
-    const format = computed(() => info.extraConfig?.format ?? "HH:mm");
+    const info = currInfo as Ref<
+      EditForm<Dictionary, BaseFormType.TimeRangePicker>
+    >;
+    const format = computed(() => info.value.extraConfig?.format ?? "HH:mm");
     const currentPlaceholder = computed(() =>
       placeholder
         ? (placeholder as unknown as [string, string])
         : ["Start", "End"]
     );
 
-    return (
+    return () => (
       <ElTimePicker
         model-value={currentValue.value}
         class="full-width"

@@ -1,6 +1,8 @@
-import FormMixin, { FormMixinsProps } from "./FormMixin";
+import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
+import type { Ref } from "vue";
 import { defineComponent, ref, watch } from "vue";
 import type {
+  AdvancedSearchType,
   BaseFormType,
   CascaderData,
   Dictionary,
@@ -11,8 +13,8 @@ import { ElCascader, ElMessage } from "element-plus";
 export default defineComponent({
   name: "CascaderForm",
   props: FormMixinsProps,
-  emits: ["update:modelValue"],
-  async setup(props, { emit }) {
+  emits: FormMixinsEmits,
+  async setup(props, ctx) {
     const {
       init,
       currentValue,
@@ -20,7 +22,7 @@ export default defineComponent({
       placeholder,
       watchFunc,
       setCurrentValue,
-    } = FormMixin(props);
+    } = FormMixin(props, ctx);
     init();
 
     const cascaderOption = ref<CascaderData[]>([]);
@@ -31,7 +33,7 @@ export default defineComponent({
         val = [];
       }
       await checkDynamicLastChildExists(val);
-      emit("update:modelValue", val);
+      ctx.emit("update:modelValue", val);
     };
 
     watch(
@@ -46,26 +48,29 @@ export default defineComponent({
       }
     );
 
-    const info = currInfo as EditForm<Dictionary, BaseFormType.Cascader>;
+    const info = currInfo as Ref<
+      | EditForm<Dictionary, BaseFormType.Cascader>
+      | AdvancedSearchType<Dictionary, Dictionary, BaseFormType.Cascader>
+    >;
 
     async function setCascaderOptions(): Promise<void> {
-      if (info.extraConfig?.async === true) {
-        cascaderOption.value = await info.extraConfig.asyncFunc!();
-      } else if (info.extraConfig?.cascaderData) {
-        cascaderOption.value = info.extraConfig.cascaderData;
+      if (info.value.extraConfig?.async === true) {
+        cascaderOption.value = await info.value.extraConfig.asyncFunc!();
+      } else if (info.value.extraConfig?.cascaderData) {
+        cascaderOption.value = info.value.extraConfig.cascaderData;
       }
     }
 
     async function loadData(selectedOptions: CascaderData[]): Promise<void> {
-      if (info.extraConfig?.async === true) {
-        if (typeof info.extraConfig.asyncFunc! !== "function") {
+      if (info.value.extraConfig?.async === true) {
+        if (typeof info.value.extraConfig.asyncFunc! !== "function") {
           ElMessage.error(
             "The asynchronously loaded data passed in is not a function"
           );
         } else {
           const targetOption = selectedOptions[selectedOptions.length - 1];
           targetOption.loading = true;
-          const data = await info.extraConfig.asyncFunc(
+          const data = await info.value.extraConfig.asyncFunc(
             selectedOptions.map((option) => option.value)
           );
           targetOption.loading = false;
@@ -83,7 +88,10 @@ export default defineComponent({
     }
 
     async function checkDynamicLastChildExists(val: string[]): Promise<void> {
-      if (info.extraConfig?.async === true && cascaderOption.value.length) {
+      if (
+        info.value.extraConfig?.async === true &&
+        cascaderOption.value.length
+      ) {
         const firstLevel = cascaderOption.value.find(
           (item) => item.value === val[0]
         );
@@ -96,7 +104,7 @@ export default defineComponent({
               (item) => item.value === val[2]
             );
             if (thirdLevel && !thirdLevel.children?.length) {
-              thirdLevel.children = await info.extraConfig.asyncFunc!(
+              thirdLevel.children = await info.value.extraConfig.asyncFunc!(
                 val.slice(0, -1)
               );
               hasInitOption.value = true;
@@ -110,7 +118,7 @@ export default defineComponent({
 
     await setCascaderOptions();
 
-    return (
+    return () => (
       <ElCascader
         model-value={currentValue.value}
         options={cascaderOption.value}

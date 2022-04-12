@@ -4,9 +4,10 @@ import type {
   Dictionary,
   ColumnFormatterParam,
   Column,
+  ColumnCallbackParams,
 } from "@/config";
-import type { Ref, Slot, VNode } from "vue";
-import { defineComponent, inject } from "vue";
+import type { Ref, VNode } from "vue";
+import { defineComponent, inject, ref } from "vue";
 import { Fixed } from "@/config";
 import { Table as VxeTable, Column as VxeColumn } from "vxe-table";
 import { Operations } from "./Operations";
@@ -17,6 +18,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
     setup() {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const dataList = inject<Ref<Row[]>>("dataList");
+      const loading = inject<Ref<boolean>>("loading");
 
       function specialColumnRender(): Array<VNode | undefined> {
         return [
@@ -38,54 +40,27 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
       }
 
       function columnRender(): VNode[] {
-        return (currentConfig?.value.columns || []).map((column, index) => {
-          if (index === 0) {
-            return (
-              <VxeColumn
-                field={column.field}
-                title={column.title}
-                fixed={column.fixed === true ? Fixed.Left : column.fixed}
-                type={column.type}
-                width={column.width}
-                min-width={column.minWidth}
-                align={column.align}
-                header-align={column.titleAlign}
-                resizable={column.resizable}
-                show-overflow={column.showOverflow}
-                show-header-overflow={column.showHeaderOverflow}
-                class-name={column.className}
-                header-class-name={column.headerClassName}
-                formatter={(params: ColumnFormatterParam) =>
-                  columnFormatter(params, column)
-                }
-                {...{
-                  scopedSlots: columnScopedSlots(column),
-                }}
-              />
-            );
-          } else {
-            return (
-              <VxeColumn
-                field={column.field}
-                title={column.title}
-                width={column.width}
-                min-width={column.minWidth}
-                align={column.align}
-                header-align={column.titleAlign}
-                resizable={column.resizable}
-                show-overflow={column.showOverflow}
-                show-header-overflow={column.showHeaderOverflow}
-                class-name={column.className}
-                header-class-name={column.headerClassName}
-                formatter={(params: ColumnFormatterParam) =>
-                  columnFormatter(params, column)
-                }
-                {...{
-                  scopedSlots: columnScopedSlots(column),
-                }}
-              />
-            );
-          }
+        return (currentConfig?.value.columns || []).map((column) => {
+          return (
+            <VxeColumn
+              v-slots={columnScopedSlots(column)}
+              title={column.title}
+              fixed={column.fixed === true ? Fixed.Left : column.fixed}
+              type={column.type}
+              width={column.width}
+              min-width={column.minWidth}
+              align={column.align}
+              header-align={column.titleAlign}
+              resizable={column.resizable}
+              show-overflow={column.showOverflow}
+              show-header-overflow={column.showHeaderOverflow}
+              class-name={column.className}
+              header-class-name={column.headerClassName}
+              formatter={(params: ColumnFormatterParam) =>
+                columnFormatter(params, column)
+              }
+            />
+          );
         });
       }
 
@@ -100,13 +75,16 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
         }
       }
 
-      function columnScopedSlots(column: Column<Row>): Record<string, Slot> {
-        const scopedSlots: Record<string, Slot> = {};
+      function columnScopedSlots(column: Column<Row>) {
+        const scopedSlots = {
+          default: (scope: ColumnCallbackParams) => (
+            <span>{scope.row[column.field]}</span>
+          ),
+        };
 
         if (typeof column.render === "function") {
-          scopedSlots.default = (scope) => [
-            column.render!(scope.row[column.field], scope.row),
-          ];
+          scopedSlots.default = (scope) =>
+            column.render!(scope.row[column.field], scope.row);
         }
 
         return scopedSlots;
@@ -124,14 +102,26 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
         }
       }
 
-      const OperationsTag = Operations<Row, Search>();
+      const tableSize = ref();
+      switch (currentConfig?.value.size) {
+        case "default":
+        default:
+          tableSize.value = "small";
+          break;
+        case "large":
+          tableSize.value = "medium";
+          break;
+        case "small":
+          tableSize.value = "mini";
+          break;
+      }
 
       return () => (
-        <div class="table-view__body">
+        <div v-loading={loading?.value} class="table-view__body">
           <VxeTable
             height="100%"
             data={dataList?.value}
-            size={currentConfig?.value.size}
+            size={tableSize.value}
             stripe={currentConfig?.value.stripe}
             border={currentConfig?.value.border}
             round={currentConfig?.value.round}
@@ -142,7 +132,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
           >
             {...specialColumnRender()}
             {columnRender()}
-            <OperationsTag />
+            {Operations<Row, Search>()}
           </VxeTable>
         </div>
       );

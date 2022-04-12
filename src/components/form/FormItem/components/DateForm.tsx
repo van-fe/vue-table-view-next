@@ -1,37 +1,41 @@
-import FormMixin, { FormMixinsProps } from "./FormMixin";
+import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
 import type { Dictionary, EditForm } from "@/config";
 import { BaseFormType } from "@/config";
+import type { Ref } from "vue";
 import { computed, defineComponent } from "vue";
 import { ElDatePicker } from "element-plus";
 
 export default defineComponent({
   name: "DateForm",
   props: FormMixinsProps,
-  setup(props) {
+  emits: FormMixinsEmits,
+  setup(props, ctx) {
     const {
       init,
       currentValue,
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = FormMixin(props);
+    } = FormMixin(props, ctx);
     init();
 
-    const info = currInfo as EditForm<
-      Dictionary,
-      BaseFormType.DatePicker | BaseFormType.DateTimePicker
+    const info = currInfo as Ref<
+      EditForm<
+        Dictionary,
+        BaseFormType.DatePicker | BaseFormType.DateTimePicker
+      >
     >;
     const type = computed(() =>
-      info.type === BaseFormType.DateTimePicker ? "datetime" : "date"
+      info.value.type === BaseFormType.DateTimePicker ? "datetime" : "date"
     );
     const currentPlaceholder = computed(
       () => placeholder.value || "Please Choose Datetime"
     );
     const format = computed(
-      () => info.extraConfig?.format ?? "yyyy-MM-dd HH:mm"
+      () => info.value.extraConfig?.format ?? "yyyy-MM-dd HH:mm"
     );
 
-    return (
+    return () => (
       <ElDatePicker
         model-value={currentValue.value}
         class="full-width"
@@ -40,7 +44,7 @@ export default defineComponent({
         placeholder={currentPlaceholder.value}
         value-format={format.value}
         format={format.value}
-        picker-options={info.extraConfig?.pickerOptions || {}}
+        picker-options={info.value.extraConfig?.pickerOptions || {}}
         onUpdate:model-value={setCurrentValue}
       />
     );

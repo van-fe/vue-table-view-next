@@ -7,7 +7,7 @@ import type { Config, Dictionary, PaginationData } from "@/config";
 import { merge } from "lodash-es";
 import GlobalConfig from "@/utils/globalConfig";
 
-const TableView = <Row, Search extends Dictionary>() =>
+const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
   defineComponent({
     name: "TableView",
     props: {
@@ -16,14 +16,16 @@ const TableView = <Row, Search extends Dictionary>() =>
         required: true,
       },
     },
-    setup(props) {
-      const Header = TableViewHeader<Row, Search>();
+    setup(props, { slots }) {
+      const Header = TableViewHeader<Row, Search, Edit>();
       const Body = TableViewBody<Row, Search>();
       const Footer = TableViewFooter<Row, Search>();
       const headerRef = ref<typeof Header | null>(null);
       const bodyRef = ref(null);
       const footerRef = ref(null);
 
+      const loading = ref(false);
+      const searchValue = ref<Search | {}>({});
       const currentConfig = ref<Config<Row, Search>>(
         merge({}, GlobalConfig.globalConfig, props.config)
       );
@@ -36,6 +38,7 @@ const TableView = <Row, Search extends Dictionary>() =>
         pageAmount: 0,
       });
 
+      provide("loading", loading);
       provide("currentConfig", currentConfig);
       provide("dataList", dataList);
       provide("paginationInfo", paginationInfo);
@@ -44,9 +47,18 @@ const TableView = <Row, Search extends Dictionary>() =>
         if (typeof currentConfig.value.getListFunc !== "function") {
           throw new SyntaxError("The config => getListFunc is not a function");
         } else {
-          const res = await currentConfig.value.getListFunc(
-            headerRef.value?.$refs.advancedSearch.mergeRequestParams() as Search
-          );
+          const search: Search = { ...searchValue.value };
+
+          // @ts-ignore
+          search[currentConfig!.value.requestPageConfig!.perPage!] =
+            paginationInfo?.value.perPage;
+          // @ts-ignore
+          search[currentConfig!.value.requestPageConfig!.currentPage!] =
+            paginationInfo?.value.currentPage;
+
+          loading.value = true;
+          const res = await currentConfig.value.getListFunc(search);
+          loading.value = false;
 
           dataList.value = res[
             currentConfig.value.receivePageConfig!.list
@@ -79,6 +91,10 @@ const TableView = <Row, Search extends Dictionary>() =>
         }
       }
 
+      function searchChange(val: Search) {
+        searchValue.value = val;
+      }
+
       function onCurrentPageChange(evt: CustomEvent<{ page: number }>): void {
         paginationInfo.value.currentPage = evt.detail.page;
         getList().then(() => {
@@ -94,14 +110,30 @@ const TableView = <Row, Search extends Dictionary>() =>
       }
 
       function setEventListener(): void {
-        window.addEventListener("current-page-change", onCurrentPageChange);
-        window.addEventListener("page-size-change", onPageSizeChange);
+        window.addEventListener(
+          "vue-table-view-current-page-change",
+          onCurrentPageChange
+        );
+        window.addEventListener(
+          "vue-table-view-page-size-change",
+          onPageSizeChange
+        );
+        window.addEventListener("vue-table-view-refresh-table", getList);
       }
 
       function removeEventListener(): void {
-        window.removeEventListener("current-page-change", onCurrentPageChange);
-        window.removeEventListener("page-size-change", onPageSizeChange);
+        window.removeEventListener(
+          "vue-table-view-current-page-change",
+          onCurrentPageChange
+        );
+        window.removeEventListener(
+          "vue-table-view-page-size-change",
+          onPageSizeChange
+        );
+        window.removeEventListener("vue-table-view-refresh-table", getList);
       }
+
+      function doCreate(): void {}
 
       onMounted(async () => {
         if (currentConfig.value.getListAtCreated) {
@@ -115,16 +147,31 @@ const TableView = <Row, Search extends Dictionary>() =>
         removeEventListener();
       });
 
+      const headerSlots = {
+        buttons: () => slots.buttons?.(),
+      };
+
       return () => (
         <div
           class="table-view"
           style={{ height: currentConfig?.value.height ?? "100%" }}
         >
-          <Header ref={headerRef} on-do-search={getList} />
+          <Header
+            ref={headerRef}
+            onDoSearch={getList}
+            onSearchChange={searchChange}
+            onDoCreate={doCreate}
+            v-slots={headerSlots}
+          />
           <Body ref={bodyRef} />
           <Footer ref={footerRef} />
         </div>
       );
+    },
+    methods: {
+      refreshList() {
+        window.dispatchEvent(new CustomEvent("vue-table-view-refresh-table"));
+      },
     },
   });
 

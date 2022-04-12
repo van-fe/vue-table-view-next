@@ -16,8 +16,8 @@ export interface Column<Row> {
   titleAlign?: Align;
   align?: Align;
   tooltipText?: string;
-  width?: string;
-  minWidth?: string;
+  width?: number | string;
+  minWidth?: number | string;
   fixed?: true | Fixed;
   sortable?: boolean;
   resizable?: boolean;

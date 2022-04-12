@@ -1,122 +1,45 @@
-import type { Config, Dictionary, PaginationData } from "@/config";
+import type { Config, Dictionary } from "@/config";
 import type { Ref, VNode } from "vue";
-import { defineComponent, inject, reactive, ref, withModifiers } from "vue";
+import { defineComponent, inject, reactive, ref, watch } from "vue";
 import { cloneDeep } from "lodash-es";
-import { ElCol, ElButton, ElForm, ElIcon } from "element-plus";
+import {
+  ElRow,
+  ElCol,
+  ElButton,
+  ElForm,
+  ElFormItem,
+  ElIcon,
+} from "element-plus";
 import { FormItemComponent } from "@/components/form";
 import { ArrowDown } from "@element-plus/icons-vue";
 
 export const AdvancedSearch = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "AdvancedSearch",
-    emits: ["do-search"],
+    emits: ["doSearch", "searchChange"],
     setup(props, { emit }) {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
-      const paginationInfo = inject<Ref<PaginationData>>("paginationInfo");
       const defaultRequestParams = reactive<Dictionary>({});
       const search = ref<Dictionary>({});
       const isExpand = ref(false);
 
       isExpand.value = !(currentConfig?.value.advancedSearchNeedExpand ?? true);
       createDefaultRequestParams();
-      search.value = mergeRequestParams(false);
+      search.value = cloneDeep(defaultRequestParams);
+      emit("searchChange", search.value);
 
-      function createSearchFormItems(chunkIn = 2): VNode[] {
-        const Tag = FormItemComponent<Row, Search>();
-        const chunks: VNode[][] = [];
-        let tempChunks: VNode[] = [];
-        const defaultSpan = 24 / chunkIn;
-        let currSpan = 0;
-
-        (currentConfig?.value.advancedSearch || []).map((item) => {
-          if (
-            currSpan + (item.colSpan || defaultSpan) + (item.colOffset || 0) >
-            24
-          ) {
-            chunks.push(tempChunks);
-            tempChunks = [];
-            currSpan = 0;
-          } else {
-            currSpan += (item.colSpan || defaultSpan) + (item.colOffset || 0);
-
-            tempChunks.push(
-              <ElCol
-                span={item.colSpan || defaultSpan}
-                offset={item.colOffset || 0}
-              >
-                <Tag
-                  model-value={search!.value[item.field]}
-                  info={item}
-                  instance-value={search!.value}
-                  label-col={item.labelWidth ?? "auto"}
-                  onUpdate:model-value={(val) =>
-                    (search!.value[item.field] = val)
-                  }
-                />
-              </ElCol>
-            );
-          }
-        });
-
-        tempChunks.length && chunks.push(tempChunks);
-
-        return chunks.map((nodes: VNode[]) => (
-          <el-row gutter={10}>{...nodes}</el-row>
-        ));
-      }
-
-      function createDefaultRequestParams(): void {
-        if (Object.keys(defaultRequestParams).length === 0) {
-          currentConfig?.value.advancedSearch?.forEach((item) => {
-            defaultRequestParams[item.field] = item.default || null;
-          });
-        }
-      }
-
-      function mergeRequestParams(withPageInfo = true): Dictionary {
-        const search: Dictionary = cloneDeep(defaultRequestParams);
-
-        if (withPageInfo) {
-          search[currentConfig!.value.requestPageConfig!.perPage!] =
-            paginationInfo?.value.perPage;
-          search[currentConfig!.value.requestPageConfig!.currentPage!] =
-            paginationInfo?.value.currentPage;
-        }
-
-        return { ...search, ...search };
-      }
-      function doExpand(): void {
-        isExpand.value = !isExpand.value;
-      }
-
-      function doSearch(e: Event): Dictionary {
-        e.stopPropagation();
-        return search;
-      }
-
-      function doReset(): boolean {
-        search.value = cloneDeep(defaultRequestParams);
-        if (currentConfig?.value.getListAfterReset) {
-          emit("do-search", search);
-        }
-        return true;
-      }
-
-      return () => (
-        <div class="table-view__header-advanced-search">
-          <ElForm
-            class={isExpand.value ? "expanded" : "collapsed"}
-            label-width="120px"
-            label-suffix=":"
-            size="small"
-            on-submit={withModifiers(doSearch, ["prevent"])}
+      function createControllerFormItem(offset = 0): VNode {
+        return (
+          <ElCol
+            class="search-button__wrapper"
+            span={currentConfig?.value.advancedSearchFormColumnSpan}
+            offset={
+              offset || currentConfig?.value.advancedSearchFormColumnOffset
+            }
           >
-            <ElCol span={16} class={["search-form__wrapper"]}>
-              {...createSearchFormItems(3)}
-            </ElCol>
-            <ElCol span={6} offset={2} class="search-button__wrapper">
+            <ElFormItem label=".">
               {currentConfig!.value.advancedSearchNeedExpand ? (
-                <ElButton type="text" on-click={doExpand}>
+                <ElButton type="text" onClick={doExpand}>
                   {currentConfig!.value.expandButtonText}
                   <ElIcon class="el-icon--right">
                     <ArrowDown />
@@ -125,13 +48,148 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
               ) : (
                 ""
               )}
-              <ElButton type="primary" native-type="submit" size="small">
+              <ElButton type="primary" native-type="submit">
                 {currentConfig!.value.searchButtonText}
               </ElButton>
-              <ElButton size="small" on-click={doReset}>
+              <ElButton type="primary" plain onClick={doReset}>
                 {currentConfig!.value.resetSearchButtonText}
               </ElButton>
+            </ElFormItem>
+          </ElCol>
+        );
+      }
+
+      function createSearchFormItems(): VNode[] {
+        const Tag = FormItemComponent<Row, Search>();
+        const chunks: VNode[] = [];
+
+        (currentConfig?.value.advancedSearch || []).map((item) => {
+          chunks.push(
+            <ElCol
+              span={
+                item.colSpan ||
+                currentConfig?.value.advancedSearchFormColumnSpan
+              }
+              offset={
+                item.colOffset ||
+                currentConfig?.value.advancedSearchFormColumnOffset
+              }
+            >
+              <Tag
+                model-value={search!.value[item.field]}
+                info={item}
+                instance-value={search!.value}
+                label-col={item.labelWidth ?? "auto"}
+                onUpdate:model-value={(val: unknown) =>
+                  (search!.value[item.field] = val)
+                }
+              />
             </ElCol>
+          );
+        });
+
+        return chunks;
+      }
+
+      function chunkFormItems(): VNode[] {
+        const results = createSearchFormItems();
+        if (
+          currentConfig?.value.advancedSearchButtonsPosition === "first-line"
+        ) {
+          let count = 0;
+          let hasInserted = false;
+
+          for (
+            let i = 0;
+            i < (currentConfig.value.advancedSearch || []).length;
+            i++
+          ) {
+            const item = (currentConfig.value.advancedSearch || [])[i];
+            if (
+              count -
+                (currentConfig.value.advancedSearchFormColumnSpan! +
+                  currentConfig.value.advancedSearchFormColumnOffset!) >=
+              24
+            ) {
+              hasInserted = true;
+              results.splice(i, 0, createControllerFormItem());
+            } else {
+              count +=
+                (item.colSpan ||
+                  currentConfig.value.advancedSearchFormColumnSpan ||
+                  0) +
+                (item.colOffset ||
+                  currentConfig.value.advancedSearchFormColumnOffset ||
+                  0);
+            }
+          }
+
+          if (!hasInserted) {
+            results.push(
+              createControllerFormItem(
+                count -
+                  (currentConfig.value.advancedSearchFormColumnSpan! +
+                    currentConfig.value.advancedSearchFormColumnOffset!)
+              )
+            );
+          }
+        } else {
+          results.push(createControllerFormItem());
+        }
+
+        return results;
+      }
+
+      function createDefaultRequestParams(): void {
+        if (Object.keys(defaultRequestParams).length === 0) {
+          currentConfig?.value.advancedSearch?.forEach((item) => {
+            defaultRequestParams[item.field] =
+              typeof item.default === "function"
+                ? item.default()
+                : item.default ?? "";
+          });
+        }
+      }
+
+      function doExpand(): void {
+        isExpand.value = !isExpand.value;
+      }
+
+      function doSearch(e: Event): void {
+        e.preventDefault();
+        emit("doSearch");
+      }
+
+      function doReset(): void {
+        search.value = cloneDeep(defaultRequestParams);
+        if (currentConfig?.value.getListAfterReset) {
+          emit("searchChange", search.value);
+          emit("doSearch");
+        }
+      }
+
+      watch(
+        search,
+        (val) => {
+          emit("searchChange", val);
+        },
+        {
+          deep: true,
+        }
+      );
+
+      return () => (
+        <div class="table-view__header-advanced-search">
+          <ElForm
+            class={isExpand.value ? "expanded" : "collapsed"}
+            label-width={currentConfig?.value.advancedSearchLabelWidth}
+            label-suffix={currentConfig?.value.advancedSearchLabelSuffix}
+            label-position={currentConfig?.value.advancedSearchLabelPosition}
+            size={currentConfig?.value.advancedSearchFormSize}
+            // @ts-ignore
+            onSubmit={doSearch}
+          >
+            <ElRow gutter={10}>{...chunkFormItems()}</ElRow>
           </ElForm>
         </div>
       );

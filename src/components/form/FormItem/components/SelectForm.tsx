@@ -1,4 +1,5 @@
-import FormMixin, { FormMixinsProps } from "./FormMixin";
+import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
+import type { Ref } from "vue";
 import { defineComponent, ref, watch } from "vue";
 import type {
   SelectData,
@@ -7,30 +8,42 @@ import type {
   Dictionary,
   EditForm,
 } from "@/config";
-import { ElOption, ElSelectV2 } from "element-plus";
+import { ElOption, ElSelect } from "element-plus";
 
 export default defineComponent({
   name: "SelectForm",
   props: FormMixinsProps,
-  setup(props) {
+  emits: FormMixinsEmits,
+  setup(props, ctx) {
     const {
       init,
       currentValue,
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = FormMixin(props);
+    } = FormMixin(props, ctx);
     init();
 
-    const info = currInfo as EditForm<Dictionary, BaseFormType.Select>;
+    const info = currInfo as Ref<EditForm<Dictionary, BaseFormType.Select>>;
     const selectData = ref<SelectData[]>([]);
     const loading = ref(false);
 
+    async function loadSelectData(search = ""): Promise<void> {
+      if (typeof info.value.extraConfig?.asyncFunc === "function") {
+        loading.value = true;
+        selectData.value = await info.value.extraConfig?.asyncFunc(search);
+        loading.value = false;
+      }
+    }
+
     watch(
-      () => info.extraConfig,
-      (val: AdvancedSearchSelectExtra | undefined) => {
+      () => info.value.extraConfig,
+      async (val: AdvancedSearchSelectExtra | undefined) => {
         if (val && val.selectData) {
           selectData.value = val.selectData;
+        }
+        if (val?.async) {
+          await loadSelectData();
         }
       },
       {
@@ -38,15 +51,17 @@ export default defineComponent({
       }
     );
 
-    return (
-      <ElSelectV2
+    return () => (
+      <ElSelect
         model-value={currentValue.value}
-        multiple={info.extraConfig?.multiple || false}
+        multiple={info.value.extraConfig?.multiple || false}
+        collapse-tags={true}
         placeholder={placeholder.value}
         allow-clear={true}
         class="full-width"
-        filterable={info.extraConfig?.filterable || false}
+        filterable={info.value.extraConfig?.filterable || false}
         loading={loading.value}
+        clearable={true}
         onUpdate:model-value={setCurrentValue}
       >
         {selectData.value.map((item) => (
@@ -54,7 +69,7 @@ export default defineComponent({
             {item.label}
           </ElOption>
         ))}
-      </ElSelectV2>
+      </ElSelect>
     );
   },
 });

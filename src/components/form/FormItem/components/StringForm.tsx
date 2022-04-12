@@ -1,31 +1,32 @@
-import FormMixin, { FormMixinsProps } from "./FormMixin";
+import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
 import { ElInput } from "element-plus";
+import type { Ref } from "vue";
 import { defineComponent } from "vue";
 import type { EditForm, BaseFormType, Dictionary } from "@/config";
 
 export default defineComponent({
   name: "StringForm",
   props: FormMixinsProps,
-  setup(props) {
+  emits: FormMixinsEmits,
+  setup(props, ctx) {
     const {
       init,
       currentValue,
       info: currInfo,
       placeholder,
       setCurrentValue,
-    } = FormMixin(props);
+    } = FormMixin(props, ctx);
     init();
 
-    const info = currInfo as EditForm<Dictionary, BaseFormType.String>;
+    const info = currInfo as Ref<EditForm<Dictionary, BaseFormType.String>>;
 
-    return (
+    return () => (
       <ElInput
         model-value={currentValue.value}
-        type={info!.type}
         placeholder={placeholder.value}
         allow-clear={true}
-        suffix-icon={info!.extraConfig?.suffixIcon}
-        prefix-icon={info!.extraConfig?.prefixIcon}
+        suffix-icon={info.value.extraConfig?.suffixIcon}
+        prefix-icon={info.value.extraConfig?.prefixIcon}
         onUpdate:model-value={setCurrentValue}
       />
     );

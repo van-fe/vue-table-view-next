@@ -1,7 +1,8 @@
 .table-view__header-advanced-search {
   .el-form {
     width: 100%;
-    padding: 8px;
+    height: 100%;
+    padding: 8px 0;
 
     .dropdown {
       transition: all .2s;
@@ -28,7 +29,13 @@
     }
 
     .search-button__wrapper {
-      text-align: right;
+      .el-form-item__label {
+        color: transparent;
+      }
+
+      .el-form-item__content {
+        justify-content: flex-end;
+      }
     }
   }
 }

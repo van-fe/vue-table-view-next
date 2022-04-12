@@ -8,10 +8,13 @@ import type {
   Dictionary,
 } from "./common";
 import type { OperationConfig } from "./operation";
+import type { EditConfig } from "@/config/edit";
 
-export type ListDataWrapper<Row> = {
-  [key: string]: number | Row[];
-};
+export interface CustomListDataWrapper<Row> {
+  [index: string]: Row[] | number;
+}
+
+export type ListDataWrapper<Row> = CustomListDataWrapper<Row>;
 
 export type GetListFunc<Search extends Dictionary, Row> = (
   search: Search
@@ -22,7 +25,7 @@ export interface InsideGlobalConfig {
   stripe: boolean;
   border: boolean;
   round: boolean;
-  size: "medium" | "small" | "mini";
+  size: "medium" | "small" | "large";
   searchButtonText: string;
   resetSearchButtonText: string;
   expandButtonText: string;
@@ -31,6 +34,15 @@ export interface InsideGlobalConfig {
   customColumnDisplayStored: boolean;
   loadingDebounceTime: number;
   advancedSearchNeedExpand: boolean;
+  advancedSearchFormSize: "default" | "small" | "large";
+  advancedSearchLabelWidth: string | number; // 120px
+  advancedSearchLabelSuffix: string; // :
+  advancedSearchLabelPosition: "left" | "right" | "top"; // left
+  advancedSearchDefaultHeight: string;
+  advancedSearchButtonsPosition: "first-line" | "last-line"; // first-line
+  advancedSearchFormColumnSpan: number; // 4
+  advancedSearchFormColumnOffset: number; // 2
+  getListAtCreated: boolean;
   emptyText: string;
   requestPageConfig: RequestPageFieldConfig;
   receivePageConfig: ReceivePageFieldConfig;
@@ -41,7 +53,11 @@ export interface InsideGlobalConfig {
 
 export type GlobalConfigType = Partial<InsideGlobalConfig>;
 
-export interface InsideConfig<Row, Search extends Dictionary> {
+export interface InsideConfig<
+  Row,
+  Search extends Dictionary,
+  Edit extends Dictionary = Dictionary
+> {
   /**
    * appearance
    */
@@ -49,15 +65,15 @@ export interface InsideConfig<Row, Search extends Dictionary> {
   stripe: boolean;
   border: boolean;
   round: boolean;
-  size: "medium" | "small" | "mini";
+  size: "default" | "small" | "large";
   needPagination: boolean; // true
-  searchButtonText: string; // "搜索"
-  resetSearchButtonText: string; // "清空"
-  expandButtonText: string; // "展开"
+  searchButtonText: string; // "Search"
+  resetSearchButtonText: string; // "Clear"
+  expandButtonText: string; // "Expand"
   needCustomColumnDisplay: boolean; // false
   customColumnDisplayStored: boolean; // true
   loadingDebounceTime: number; // 0.5s
-  emptyText: string; // "暂无数据"
+  emptyText: string; // "No Data"
   needCheckbox: boolean;
   needRadio: boolean;
   needSeq: boolean;
@@ -90,6 +106,8 @@ export interface InsideConfig<Row, Search extends Dictionary> {
    * create/edit
    */
   useBuildInCreate: boolean; // true
+  buildInCreateButtonText: string; // Create
+  buildInEditConfig: EditConfig<Edit>;
   editForm: EditForm<Row>[];
 
   /**
@@ -102,9 +120,17 @@ export interface InsideConfig<Row, Search extends Dictionary> {
    */
   useAdvancedSearch: boolean; // true. If you need reuse search page in dialog, this option will help you.
   advancedSearchNeedExpand: boolean; // false
+  advancedSearchFormSize: "default" | "small" | "large"; // default
+  advancedSearchLabelWidth: string | number; // 120px
+  advancedSearchLabelSuffix: string; // :
+  advancedSearchLabelPosition: "left" | "right" | "top"; // right
+  advancedSearchButtonsPosition: "first-line" | "last-line"; // first-line
+  advancedSearchFormColumnSpan: number; // 4
+  advancedSearchFormColumnOffset: number; // 2
   advancedSearch: AdvancedSearchType<Search, Row>[];
+  advancedSearchDefaultHeight: string;
 }
 
-export type Config<Row, Search extends Dictionary> = Partial<
+export type Config<Row, Search extends Dictionary = Dictionary> = Partial<
   InsideConfig<Row, Search>
 >;

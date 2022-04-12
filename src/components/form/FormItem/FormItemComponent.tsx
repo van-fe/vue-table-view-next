@@ -1,12 +1,12 @@
 import type { PropType } from "vue";
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, shallowRef, watch } from "vue";
 import type { Dictionary, EditForm, AdvancedSearchType } from "@/config";
 import { BaseFormType } from "@/config";
 import FormItems from "./components";
 import { ElTooltip, ElFormItem } from "element-plus";
 
 export const FormItemComponent = <
-  Row extends Dictionary = Dictionary,
+  Row extends Dictionary,
   Search extends Dictionary = Dictionary
 >() =>
   defineComponent({
@@ -17,8 +17,7 @@ export const FormItemComponent = <
     props: {
       info: {
         type: Object as PropType<
-          | EditForm<Row, BaseFormType>
-          | AdvancedSearchType<Search, Row, BaseFormType>
+          EditForm<Row> | AdvancedSearchType<Search, Row>
         >,
         required: true,
       },
@@ -39,10 +38,10 @@ export const FormItemComponent = <
         default: false,
       },
     },
-    emits: ["update:model-value"],
+    emits: ["update:modelValue"],
     setup(props, { emit }) {
-      const currentValue = ref<unknown | unknown[]>(null);
-      const componentName = ref();
+      const currentValue = ref<unknown | unknown[]>(props.modelValue);
+      const componentName = shallowRef();
 
       switch (props.info.type) {
         case BaseFormType.String:
@@ -88,9 +87,12 @@ export const FormItemComponent = <
         }
       );
 
-      watch(currentValue, (val) => {
-        emit("update:model-value", val);
-      });
+      watch(
+        () => currentValue.value,
+        (val) => {
+          emit("update:modelValue", val);
+        }
+      );
 
       return () => (
         <ElFormItem
@@ -101,6 +103,7 @@ export const FormItemComponent = <
           <ElTooltip
             placement="top-start"
             content={props.info?.tooltipText}
+            disabled={!props.info?.tooltipText}
             raw-content
           >
             {props.isQuickView ? (
@@ -110,7 +113,7 @@ export const FormItemComponent = <
                   BaseFormType.Textarea,
                   BaseFormType.Number,
                 ].includes(props.info.type) ? (
-                  <span v-html={currentValue} />
+                  <span v-html={currentValue.value} />
                 ) : undefined}
               </template>
             ) : (
@@ -120,7 +123,7 @@ export const FormItemComponent = <
                 is={componentName.value}
                 info={props.info}
                 instance-value={props.instanceValue}
-                onUpdate:model-value={(val: unknown) =>
+                onUpdate:modelValue={(val: unknown) =>
                   (currentValue.value = val)
                 }
               />

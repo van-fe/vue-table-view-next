@@ -1,3 +1,5 @@
+import type { Align } from "./common";
+
 export enum OperationType {
   Button,
   ButtonWithIcon,
@@ -42,4 +44,6 @@ export interface OperationConfig<Row> {
   width?: string | number;
   minWidth?: string | number;
   surroundByButtonGroup?: boolean;
+  align?: Align;
+  titleAlign?: Align;
 }

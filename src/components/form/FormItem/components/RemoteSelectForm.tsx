@@ -1,4 +1,5 @@
-import FormMixin, { FormMixinsProps } from "./FormMixin";
+import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
+import type { Ref } from "vue";
 import { defineComponent, ref, watch } from "vue";
 import { debounce } from "lodash-es";
 import type { SelectData, BaseFormType, Dictionary, EditForm } from "@/config";
@@ -7,7 +8,8 @@ import { ElOption, ElSelectV2 } from "element-plus";
 export default defineComponent({
   name: "RemoteSelectForm",
   props: FormMixinsProps,
-  setup(props) {
+  emits: FormMixinsEmits,
+  setup(props, ctx) {
     const {
       init,
       currentValue,
@@ -18,10 +20,12 @@ export default defineComponent({
       comparedData,
       callbackFunc,
       setCurrentValue,
-    } = FormMixin(props);
+    } = FormMixin(props, ctx);
     init();
 
-    const info = currInfo as EditForm<Dictionary, BaseFormType.RemoteSearch>;
+    const info = currInfo as Ref<
+      EditForm<Dictionary, BaseFormType.RemoteSearch>
+    >;
     const selectData = ref<SelectData[]>([]);
     const currentSearchValue = ref("");
     const hasInit = ref(false);
@@ -29,12 +33,15 @@ export default defineComponent({
     watch(
       comparedData,
       (val: Dictionary, old: Dictionary | undefined) => {
-        if (info?.listenFieldsToSearch && info.listenFieldsToSearch.length) {
+        if (
+          info.value.listenFieldsToSearch &&
+          info.value.listenFieldsToSearch.length
+        ) {
           if (old === undefined) {
             handleSearch(currentSearchValue.value);
           } else {
             let isDiff = false;
-            info.listenFieldsToSearch.forEach((field) => {
+            info.value.listenFieldsToSearch.forEach((field) => {
               if (val[field] !== old[field]) {
                 isDiff = true;
               }
@@ -47,14 +54,14 @@ export default defineComponent({
         }
 
         if (
-          info.listenFieldsChangeToReset &&
-          info.listenFieldsChangeToReset.length
+          info.value.listenFieldsChangeToReset &&
+          info.value.listenFieldsChangeToReset.length
         ) {
           if (old === undefined) {
             handleSearch(currentSearchValue.value);
           } else if (hasInit.value) {
             let isDiff = false;
-            info.listenFieldsChangeToReset.forEach((field) => {
+            info.value.listenFieldsChangeToReset.forEach((field) => {
               if (val[field] !== old[field]) {
                 isDiff = true;
               }
@@ -79,15 +86,17 @@ export default defineComponent({
       currentSearchValue.value = val;
       debounce((val = ""): void => {
         instanceValue &&
-          info.extraConfig?.searchFunc!(val, instanceValue).then((data) => {
-            selectData.value = data;
-          });
-      }, info.extraConfig?.debounce ?? 500)(val);
+          info.value.extraConfig?.searchFunc!(val, instanceValue).then(
+            (data) => {
+              selectData.value = data;
+            }
+          );
+      }, info.value.extraConfig?.debounce ?? 500)(val);
     }
 
     callbackFunc.afterCurrentValueChanged = () => {
-      if (typeof info.defaultValueSearchFunc === "function") {
-        info
+      if (typeof info.value.defaultValueSearchFunc === "function") {
+        info.value
           .defaultValueSearchFunc(currentValue)
           .then((data: SelectData | undefined) => {
             if (
@@ -100,7 +109,7 @@ export default defineComponent({
       }
     };
 
-    return (
+    return () => (
       <ElSelectV2
         model-value={currentValue.value}
         placeholder={placeholder.value}

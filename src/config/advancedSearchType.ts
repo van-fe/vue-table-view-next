@@ -38,10 +38,10 @@ export interface AdvancedSearchType<
   colOffset?: number;
   labelWidth?: string;
   extraConfig?: AdvancedSearchExtraMap<Row>[Type];
-  beforeLoad: never;
-  listenFieldsToSearch: never;
-  listenFieldsChangeToReset: never;
-  defaultValueSearchFunc: never;
+  beforeLoad?: never;
+  listenFieldsToSearch?: never;
+  listenFieldsChangeToReset?: never;
+  defaultValueSearchFunc?: never;
 }
 
 /**
@@ -65,6 +65,8 @@ export interface AdvancedSearchSelectExtra {
   max?: number;
   min?: number;
   multiple?: boolean;
+  async?: boolean;
+  asyncFunc?: AdvancedSearchSelectAsyncFunc;
   filterable?: boolean;
 }
 
