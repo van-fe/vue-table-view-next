@@ -6,11 +6,7 @@ import { ElButton } from "element-plus";
 import { TableViewEdit } from "@/components/header/TableViewEdit";
 import mountComponent from "@/utils/mountComponent";
 
-export const TableViewHeader = <
-  Row,
-  Search extends Dictionary,
-  Edit extends Dictionary
->() =>
+export const TableViewHeader = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "TableViewHeader",
     emits: ["doSearch", "searchChange", "doCreate"],
@@ -20,7 +16,7 @@ export const TableViewHeader = <
       const editFormDestroy = ref<ReturnType<typeof mountComponent>>();
 
       function create() {
-        editFormDestroy.value = mountComponent(TableViewEdit<Row, Edit>());
+        editFormDestroy.value = mountComponent(TableViewEdit());
       }
 
       function destroyEditForm() {

@@ -12,11 +12,11 @@ import { ElButton, ElDialog, ElForm, ElRow, ElMessage } from "element-plus";
 import type { FormItemRule } from "element-plus/es/tokens/form";
 import { FormItemComponent } from "@/components";
 
-export const TableViewEdit = <Row, Edit extends Dictionary>() =>
+export const TableViewEdit = () =>
   defineComponent({
     name: "TableViewEdit",
     setup() {
-      const currentConfig = inject<Ref<Config<Row>>>("currentConfig");
+      const currentConfig = inject<Ref<Config>>("currentConfig");
 
       const dialogVisible = ref(false);
       const formLoading = ref(false);
@@ -53,7 +53,7 @@ export const TableViewEdit = <Row, Edit extends Dictionary>() =>
       });
 
       function createControllerFormItem(): VNode[] {
-        const Tag = FormItemComponent<Edit>();
+        const Tag = FormItemComponent();
         const rows: VNode[] = [];
 
         (currentConfig?.value.editForm || []).map((item) => {
@@ -147,7 +147,6 @@ export const TableViewEdit = <Row, Edit extends Dictionary>() =>
             // @ts-ignore
             onSubmit={withModifiers(onSubmit, ["prevent"])}
           >
-            {...createControllerFormItem()}
             <input v-show={false} type="submit" />
           </ElForm>
           <template v-slot:footer>

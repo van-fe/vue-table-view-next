@@ -131,6 +131,7 @@ export interface InsideConfig<
   advancedSearchDefaultHeight: string;
 }
 
-export type Config<Row, Search extends Dictionary = Dictionary> = Partial<
-  InsideConfig<Row, Search>
->;
+export type Config<
+  Row extends Dictionary = Dictionary,
+  Search extends Dictionary = Dictionary
+> = Partial<InsideConfig<Row, Search>>;
