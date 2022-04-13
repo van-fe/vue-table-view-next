@@ -27,7 +27,6 @@ export default function FormMixin(
 ) {
   const currentValue = ref<null | unknown>(null);
   let comparedDataInstance = reactive<Dictionary>({});
-  const hasFormatValue = ref(false);
 
   const placeholder = computed(() => {
     if (props.info && typeof props.info.placeholder !== "undefined") {
@@ -84,16 +83,7 @@ export default function FormMixin(
   });
 
   function setValue(val: unknown | null = null): void {
-    if (
-      !hasFormatValue.value &&
-      props.info &&
-      typeof props.info?.beforeLoad === "function"
-    ) {
-      currentValue.value = props.info.beforeLoad(props.modelValue);
-      hasFormatValue.value = true;
-    } else {
-      currentValue.value = val ?? props.modelValue;
-    }
+    currentValue.value = val ?? props.modelValue;
   }
 
   function setCurrentValue(val: unknown): void {
@@ -114,7 +104,6 @@ export default function FormMixin(
     ...toRefs(props),
     currentValue,
     comparedDataInstance,
-    hasFormatValue,
     placeholder,
     disabled,
     comparedData,
