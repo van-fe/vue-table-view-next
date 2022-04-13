@@ -31,6 +31,7 @@ export default defineComponent({
         placeholder={currentPlaceholder.value}
         value-format={format.value}
         format={format.value}
+        clearable={info.value?.clearable ?? true}
         onUpdate:model-value={setCurrentValue}
       />
     );

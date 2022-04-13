@@ -13,7 +13,10 @@ import {
 import { FormItemComponent } from "@/components/form";
 import { ArrowDown } from "@element-plus/icons-vue";
 
-export const AdvancedSearch = <Row, Search extends Dictionary>() =>
+export const AdvancedSearch = <
+  Row extends Dictionary,
+  Search extends Dictionary
+>() =>
   defineComponent({
     name: "AdvancedSearch",
     emits: ["doSearch", "searchChange"],
@@ -66,6 +69,11 @@ export const AdvancedSearch = <Row, Search extends Dictionary>() =>
         (currentConfig?.value.advancedSearch || []).map((item) => {
           chunks.push(
             <ElCol
+              v-show={
+                typeof item.visible === "function"
+                  ? item.visible(search.value as Search)
+                  : item.visible ?? true
+              }
               span={
                 item.colSpan ||
                 currentConfig?.value.advancedSearchFormColumnSpan

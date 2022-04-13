@@ -19,4 +19,9 @@ export interface EditConfig<Edit> {
   createFailTips?: string | ((callback: object) => string);
   editSuccessTips?: string | ((callback: object) => string);
   editFailTips?: string | ((callback: object) => string);
+
+  onCreateSuccess?: Function;
+  onCreateFail?: Function;
+  onEditSuccess?: Function;
+  onEditFail?: Function;
 }

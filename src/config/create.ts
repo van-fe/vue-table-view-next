@@ -27,26 +27,32 @@ export interface EditFormExtraMap<Row> {
 }
 
 export type EditFormDisabled<Row> = AdvancedSearchDisabled<Row>;
+export type EditFormVisible<Row, Edit> =
+  | boolean
+  | ((row: Row | null, form: Edit) => boolean);
 
 export interface EditForm<
   Row extends Dictionary = Dictionary,
-  Type extends keyof EditFormExtraMap<Row> = BaseFormType
+  Type extends keyof EditFormExtraMap<Row> = BaseFormType,
+  Edit extends Dictionary = Dictionary
 > {
   field: keyof Row & string;
   title: string;
   type: Type;
   tooltipText?: string;
   placeholder?: boolean | string | ((value: Row) => string); // if true, same as title
+  clearable?: boolean; // true
   default: unknown | Function;
   rule?: FormItemRule | FormItemRule[];
   disabled?: EditFormDisabled<Row>;
+  visible?: EditFormVisible<Row, Edit>;
   colSpan?: number;
   colOffset?: number;
   listenFieldsToSearch?: string[];
   listenFieldsChangeToReset?: string[];
   defaultValueSearchFunc?: (val: unknown) => Promise<SelectData | undefined>;
-  beforeLoad?: <T>(value: T) => T;
-  beforeSubmit?: <T>(value: T) => T;
+  beforeLoad?: (value: unknown, row: Row | null) => unknown;
+  beforeSubmit?: (value: unknown, row: Row | null) => unknown;
   render?: (value: Row, callback: (result: unknown) => void) => VNode;
   extraConfig?: EditFormExtraMap<Row>[Type];
 }

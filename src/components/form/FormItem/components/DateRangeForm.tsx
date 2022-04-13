@@ -45,7 +45,7 @@ export default defineComponent({
         model-value={currentValue.value}
         class="full-width"
         type={type.value}
-        allow-clear={true}
+        clearable={info.value?.clearable ?? true}
         show-time={showTime.value}
         start-placeholder={currentPlaceholder.value[0]}
         end-placeholder={currentPlaceholder.value[1]}

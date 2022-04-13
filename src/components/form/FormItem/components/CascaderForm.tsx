@@ -126,6 +126,7 @@ export default defineComponent({
         change-on-select={false}
         placeholder={placeholder.value}
         load-data={loadData}
+        clearable={info.value?.clearable ?? true}
         onUpdate:model-value={setCurrentValue}
       />
     );

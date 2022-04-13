@@ -35,6 +35,7 @@ export default defineComponent({
         is-range={true}
         value-format={format.value}
         format={format.value}
+        clearable={info.value?.clearable ?? true}
         start-placeholder={currentPlaceholder.value[0]}
         end-placeholder={currentPlaceholder.value[1]}
         onUpdate:model-value={setCurrentValue}

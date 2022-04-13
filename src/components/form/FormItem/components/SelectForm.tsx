@@ -57,11 +57,10 @@ export default defineComponent({
         multiple={info.value.extraConfig?.multiple || false}
         collapse-tags={true}
         placeholder={placeholder.value}
-        allow-clear={true}
         class="full-width"
         filterable={info.value.extraConfig?.filterable || false}
         loading={loading.value}
-        clearable={true}
+        clearable={info.value?.clearable ?? true}
         onUpdate:model-value={setCurrentValue}
       >
         {selectData.value.map((item) => (

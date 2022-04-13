@@ -16,11 +16,25 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
       const editFormDestroy = ref<ReturnType<typeof mountComponent>>();
 
       function create() {
-        editFormDestroy.value = mountComponent(TableViewEdit());
+        editFormDestroy.value = mountComponent(TableViewEdit(), {
+          currentConfig,
+        });
       }
 
       function destroyEditForm() {
         editFormDestroy.value?.();
+      }
+
+      function editFormSubmitFinished() {
+        emit("doSearch");
+      }
+
+      function editRow(e: CustomEvent<{ row: Dictionary }>) {
+        console.log(e);
+        editFormDestroy.value = mountComponent(TableViewEdit(), {
+          currentConfig,
+          row: e.detail.row,
+        });
       }
 
       onMounted(() => {
@@ -28,6 +42,11 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
           "vue-table-view-destroy-edit-form",
           destroyEditForm
         );
+        window.addEventListener(
+          "vue-table-view-edit-form-submit-finished",
+          editFormSubmitFinished
+        );
+        window.addEventListener("vue-table-view-edit-row", editRow);
       });
 
       onBeforeUnmount(() => {
@@ -35,6 +54,11 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
           "vue-table-view-destroy-edit-form",
           destroyEditForm
         );
+        window.removeEventListener(
+          "vue-table-view-edit-form-submit-finished",
+          editFormSubmitFinished
+        );
+        window.removeEventListener("vue-table-view-edit-row", editRow);
       });
 
       return () => (

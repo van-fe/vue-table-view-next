@@ -40,7 +40,7 @@ export default defineComponent({
         model-value={currentValue.value}
         class="full-width"
         type={type.value}
-        allow-clear={true}
+        clearable={info.value?.clearable ?? true}
         placeholder={currentPlaceholder.value}
         value-format={format.value}
         format={format.value}

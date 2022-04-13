@@ -17,7 +17,7 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
       },
     },
     setup(props, { slots }) {
-      const Header = TableViewHeader<Row, Search, Edit>();
+      const Header = TableViewHeader<Row, Search>();
       const Body = TableViewBody<Row, Search>();
       const Footer = TableViewFooter<Row, Search>();
       const headerRef = ref<typeof Header | null>(null);
@@ -171,6 +171,15 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
     methods: {
       refreshList() {
         window.dispatchEvent(new CustomEvent("vue-table-view-refresh-table"));
+      },
+      editRow(row: Row) {
+        window.dispatchEvent(
+          new CustomEvent("vue-table-view-edit-row", {
+            detail: {
+              row,
+            },
+          })
+        );
       },
     },
   });

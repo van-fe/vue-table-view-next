@@ -6,6 +6,10 @@ export type AdvancedSearchDisabled<Search> =
   | boolean
   | ((curr: unknown, allSearch: Search) => boolean);
 
+export type AdvancedSearchVisible<Search> =
+  | boolean
+  | ((allSearch: Search) => boolean);
+
 export interface AdvancedSearchExtraMap<Row> {
   string: AdvancedSearchStringExtra;
   textarea: AdvancedSearchStringExtra;
@@ -34,6 +38,7 @@ export interface AdvancedSearchType<
   placeholder?: boolean | string | [string, string]; // if true, same as title
   clearable?: boolean; // true
   disabled?: AdvancedSearchDisabled<Search>;
+  visible?: AdvancedSearchVisible<Search>;
   colSpan?: number;
   colOffset?: number;
   labelWidth?: string;

@@ -25,7 +25,7 @@ export default defineComponent({
         model-value={currentValue.value}
         type="number"
         placeholder={placeholder.value}
-        allow-clear={true}
+        clearable={info.value?.clearable ?? true}
         class="full-width"
         // @ts-ignore
         max={info.value.extraConfig?.max}

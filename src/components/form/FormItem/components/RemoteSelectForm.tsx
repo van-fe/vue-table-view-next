@@ -113,7 +113,7 @@ export default defineComponent({
       <ElSelectV2
         model-value={currentValue.value}
         placeholder={placeholder.value}
-        allow-clear={true}
+        clearable={info.value?.clearable ?? true}
         filterable={true}
         remote={true}
         default-first-option={false}
