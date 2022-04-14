@@ -12,7 +12,7 @@ export enum OperationType {
 }
 
 export type OperationDisabledHandler<Row> = (row: Row) => boolean;
-export type OperationDisappearHandler<Row> = (row: Row) => boolean;
+export type OperationVisibleHandler<Row> = (row: Row) => boolean;
 export type OperationClickHandler<Row> = (row: Row) => void;
 
 export interface Operation<Row> {
@@ -21,7 +21,7 @@ export interface Operation<Row> {
   colorType?: string; // while you want to change button/link color
   hoverToShowText?: string;
   disabled?: OperationDisabledHandler<Row>;
-  disappear?: OperationDisappearHandler<Row>;
+  visible?: OperationVisibleHandler<Row>;
   onClick?: OperationClickHandler<Row>;
   /**
    * only for type = Button | Link | LinkWithoutUnderline | ButtonMore | More

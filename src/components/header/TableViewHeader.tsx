@@ -30,7 +30,6 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
       }
 
       function editRow(e: CustomEvent<{ row: Dictionary }>) {
-        console.log(e);
         editFormDestroy.value = mountComponent(TableViewEdit(), {
           currentConfig,
           row: e.detail.row,

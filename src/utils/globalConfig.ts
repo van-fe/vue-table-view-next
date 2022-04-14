@@ -27,6 +27,7 @@ class GlobalConfig {
     advancedSearchFormColumnSpan: 6,
     advancedSearchFormColumnOffset: 0,
     getListAtCreated: true,
+    usePagination: true,
     requestPageConfig: {
       currentPage: "pageNum",
       perPage: "pageSize",

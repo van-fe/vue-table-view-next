@@ -15,6 +15,7 @@ export enum BaseFormType {
   Number = "number",
   Select = "select",
   RemoteSearch = "remote-search",
+  TreeSelect = "tree-select",
   Cascader = "cascader",
   DatePicker = "date-picker",
   TimePicker = "time-picker",

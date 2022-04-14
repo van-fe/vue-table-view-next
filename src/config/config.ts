@@ -20,6 +20,18 @@ export type GetListFunc<Search extends Dictionary, Row> = (
   search: Search
 ) => Promise<ListDataWrapper<Row>>;
 
+export type TreeConfig = {
+  rowField: string;
+  parentField: string;
+  children: string;
+  hasChild: string;
+  indent: number;
+  showIcon: boolean;
+  expandAll: boolean;
+  expandRowKeys: string[];
+  transform: boolean;
+};
+
 export interface InsideGlobalConfig {
   language: AvailableLanguage;
   stripe: boolean;
@@ -49,6 +61,7 @@ export interface InsideGlobalConfig {
   operationConfig: OperationConfig<unknown>;
   paginationPosition: "left" | "right" | "center";
   paginationComponentProps?: Record<string, unknown>;
+  usePagination: boolean; // true
 }
 
 export type GlobalConfigType = Partial<InsideGlobalConfig>;
@@ -85,6 +98,7 @@ export interface InsideConfig<
    */
   onRadioChange: (row: Row) => void;
   onCheckboxChange: (records: CheckboxChangedRecords<Row>) => void;
+  onLoadData: () => void;
 
   /**
    * get-list
@@ -95,6 +109,8 @@ export interface InsideConfig<
   requestPageConfig: RequestPageFieldConfig;
   receivePageConfig: ReceivePageFieldConfig;
   getListAfterReset: boolean; // true
+  usePagination: boolean; // true
+  treeConfig: Partial<TreeConfig>;
 
   /**
    * operations

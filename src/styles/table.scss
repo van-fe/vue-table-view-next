@@ -4,6 +4,7 @@
 @import "vxe-table/styles/column";
 @import "vxe-table/styles/table";
 @import "vxe-table/styles/tooltip";
+@import "vxe-table/styles/icon";
 
 .table-view {
   display: flex;
@@ -65,6 +66,10 @@
 
     .page__wrapper {
       width: fit-content;
+
+      .el-pagination.is-background .btn-next {
+        margin-right: 16px;
+      }
     }
 
     &.left {

@@ -8,6 +8,7 @@ import type {
   AdvancedSearchDisabled,
   AdvancedSearchSelectExtra,
   AdvancedSearchStringExtra,
+  AdvancedSearchTreeSelectExtra,
 } from "./advancedSearchType";
 import type { FormItemRule } from "element-plus/es/tokens/form";
 
@@ -17,6 +18,7 @@ export interface EditFormExtraMap<Row> {
   number: EditFormNumberExtra;
   select: EditFormSelectExtra;
   cascader: EditFormCascaderExtra;
+  "tree-select": EditFormTreeSelectExtra;
   "remote-search": EditFormRemoteSearchExtra<Row>;
   "date-picker": EditFormDateTimePickerExtra;
   "time-picker": EditFormDateTimePickerExtra;
@@ -66,6 +68,13 @@ export type EditFormStringExtra = AdvancedSearchStringExtra;
  * for select
  */
 export type EditFormSelectExtra = AdvancedSearchSelectExtra;
+
+/**
+ * for tree-select
+ */
+export interface EditFormTreeSelectExtra extends AdvancedSearchTreeSelectExtra {
+  showCheckbox?: boolean;
+}
 
 /**
  * for cascader

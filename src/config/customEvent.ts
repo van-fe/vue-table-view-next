@@ -8,5 +8,7 @@ declare global {
     "vue-table-view-destroy-edit-form": CustomEvent;
     "vue-table-view-edit-form-submit-finished": CustomEvent;
     "vue-table-view-edit-row": CustomEvent<{ row: Dictionary }>;
+    "vue-table-view-switch-loading": CustomEvent<{ status: boolean }>;
+    "vue-table-view-toggle-tree": CustomEvent<{ expand: boolean }>;
   }
 }

@@ -7,7 +7,7 @@ import type {
   ColumnCallbackParams,
 } from "@/config";
 import type { Ref, VNode } from "vue";
-import { defineComponent, inject, ref } from "vue";
+import { defineComponent, inject, onBeforeUnmount, onMounted, ref } from "vue";
 import { Fixed } from "@/config";
 import { Table as VxeTable, Column as VxeColumn } from "vxe-table";
 import { Operations } from "./Operations";
@@ -16,6 +16,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "TableViewBody",
     setup() {
+      const tableRef = ref();
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const dataList = inject<Ref<Row[]>>("dataList");
       const loading = inject<Ref<boolean>>("loading");
@@ -56,6 +57,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
               show-header-overflow={column.showHeaderOverflow}
               class-name={column.className}
               header-class-name={column.headerClassName}
+              tree-node={column.treeNode}
               formatter={(params: ColumnFormatterParam) =>
                 columnFormatter(params, column)
               }
@@ -85,6 +87,10 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
         if (typeof column.render === "function") {
           scopedSlots.default = (scope) =>
             column.render!(scope.row[column.field], scope.row);
+        } else if (typeof column.format === "function") {
+          scopedSlots.default = (scope) => (
+            <span>{column.format!(scope.row[column.field], scope.row)}</span>
+          );
         }
 
         return scopedSlots;
@@ -116,9 +122,30 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
           break;
       }
 
+      function toggleTree(evt: CustomEvent<{ expand: boolean }>) {
+        tableRef.value?.setAllTreeExpand(evt.detail.expand);
+      }
+
+      function setEventListener(): void {
+        window.addEventListener("vue-table-view-toggle-tree", toggleTree);
+      }
+
+      function removeEventListener(): void {
+        window.removeEventListener("vue-table-view-toggle-tree", toggleTree);
+      }
+
+      onMounted(() => {
+        setEventListener();
+      });
+
+      onBeforeUnmount(() => {
+        removeEventListener();
+      });
+
       return () => (
         <div v-loading={loading?.value} class="table-view__body">
           <VxeTable
+            ref={tableRef}
             height="100%"
             data={dataList?.value}
             size={tableSize.value}
@@ -126,6 +153,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
             border={currentConfig?.value.border}
             round={currentConfig?.value.round}
             empty-text={currentConfig?.value.emptyText}
+            tree-config={currentConfig?.value.treeConfig}
             on-checkbox-all={onCheckboxChange}
             on-radio-change={onRadioChange}
             on-checkbox-change={onCheckboxChange}

@@ -1,6 +1,9 @@
 import type { SelectData } from "./select";
 import type { BaseFormType, Dictionary } from "./common";
 import type { CascaderData } from "./cascader";
+import type { Component } from "vue";
+import type Node from "element-plus/lib/components/tree/src/model/node";
+import type { TreeData } from "element-plus/es/components/tree/src/tree.type";
 
 export type AdvancedSearchDisabled<Search> =
   | boolean
@@ -17,6 +20,7 @@ export interface AdvancedSearchExtraMap<Row> {
   select: AdvancedSearchSelectExtra;
   cascader: AdvancedSearchCascaderExtra;
   "remote-search": AdvancedSearchRemoteSearchExtra<Row>;
+  "tree-select": AdvancedSearchTreeSelectExtra;
   "date-picker": AdvancedSearchDateTimePickerExtra;
   "time-picker": AdvancedSearchDateTimePickerExtra;
   "date-time-picker": AdvancedSearchDateTimePickerExtra;
@@ -73,6 +77,35 @@ export interface AdvancedSearchSelectExtra {
   async?: boolean;
   asyncFunc?: AdvancedSearchSelectAsyncFunc;
   filterable?: boolean;
+}
+
+/**
+ * for tree-select
+ */
+export interface AdvancedSearchTreeSelectExtra
+  extends AdvancedSearchSelectExtra {
+  showCheckbox?: boolean;
+  checkStrictly?: boolean;
+  filterNodeMethod?: (value: unknown, data: TreeData, node: Node) => boolean;
+  indent?: number;
+  icon?: string | Component;
+  props?: {
+    label?: string;
+    children?: string;
+    disabled?: string | ((data: TreeData, node: Node) => boolean);
+    isLeaf?: string | ((data: TreeData, node: Node) => boolean);
+    class?: string | ((data: TreeData, node: Node) => boolean);
+  };
+  defaultExpandAll?: boolean;
+  expandOnClickNode?: boolean;
+  checkOnClickNode?: boolean;
+  draggable?: boolean;
+  allowDrag?: (node: Node) => boolean;
+  allowDrop?: (
+    draggingNode: Node,
+    dropNode: Node,
+    type: "prev" | "inner" | "next"
+  ) => boolean;
 }
 
 /**

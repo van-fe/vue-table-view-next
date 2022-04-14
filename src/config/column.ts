@@ -18,6 +18,7 @@ export interface Column<Row> {
   tooltipText?: string;
   width?: number | string;
   minWidth?: number | string;
+  treeNode?: boolean;
   fixed?: true | Fixed;
   sortable?: boolean;
   resizable?: boolean;

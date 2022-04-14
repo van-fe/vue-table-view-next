@@ -1,5 +1,12 @@
 import type { PropType } from "vue";
-import { defineComponent, onBeforeUnmount, onMounted, provide, ref } from "vue";
+import {
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  ref,
+} from "vue";
 import { TableViewHeader } from "./header";
 import { TableViewBody } from "./body";
 import { TableViewFooter } from "./TableViewFooter";
@@ -7,7 +14,7 @@ import type { Config, Dictionary, PaginationData } from "@/config";
 import { merge } from "lodash-es";
 import GlobalConfig from "@/utils/globalConfig";
 
-const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
+const TableView = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "TableView",
     props: {
@@ -88,6 +95,10 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
             (paginationInfo.value.pageAmount = res[
               currentConfig.value.receivePageConfig.pages
             ] as number);
+
+          nextTick(() => {
+            currentConfig.value.onLoadData && currentConfig.value.onLoadData();
+          });
         }
       }
 
@@ -109,6 +120,10 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
         });
       }
 
+      function switchLoading(evt: CustomEvent<{ status: boolean }>): void {
+        loading.value = evt.detail.status;
+      }
+
       function setEventListener(): void {
         window.addEventListener(
           "vue-table-view-current-page-change",
@@ -119,6 +134,7 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
           onPageSizeChange
         );
         window.addEventListener("vue-table-view-refresh-table", getList);
+        window.addEventListener("vue-table-view-switch-loading", switchLoading);
       }
 
       function removeEventListener(): void {
@@ -131,6 +147,10 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
           onPageSizeChange
         );
         window.removeEventListener("vue-table-view-refresh-table", getList);
+        window.removeEventListener(
+          "vue-table-view-switch-loading",
+          switchLoading
+        );
       }
 
       function doCreate(): void {}
@@ -164,7 +184,7 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
             v-slots={headerSlots}
           />
           <Body ref={bodyRef} />
-          <Footer ref={footerRef} />
+          {currentConfig.value.usePagination && <Footer ref={footerRef} />}
         </div>
       );
     },
@@ -177,6 +197,24 @@ const TableView = <Row, Search extends Dictionary, Edit extends Dictionary>() =>
           new CustomEvent("vue-table-view-edit-row", {
             detail: {
               row,
+            },
+          })
+        );
+      },
+      switchLoading(status: boolean) {
+        window.dispatchEvent(
+          new CustomEvent("vue-table-view-switch-loading", {
+            detail: {
+              status,
+            },
+          })
+        );
+      },
+      toggleTree(expand: boolean) {
+        window.dispatchEvent(
+          new CustomEvent("vue-table-view-toggle-tree", {
+            detail: {
+              expand,
             },
           })
         );

@@ -25,7 +25,7 @@ export const Operations = <Row, Search extends Dictionary>() => {
   ): VNode {
     return (
       <ElButton
-        v-show={operation.disappear?.(scope.row) ?? true}
+        v-show={operation.visible?.(scope.row) ?? true}
         icon={operation.icon}
         size="small"
         type={operation?.status ?? undefined}
@@ -44,7 +44,7 @@ export const Operations = <Row, Search extends Dictionary>() => {
   ): VNode {
     return (
       <ElLink
-        v-show={operation.disappear?.(scope.row) ?? true}
+        v-show={operation.visible?.(scope.row) ?? true}
         type={operation?.status ?? undefined}
         underline={operation.type === OperationType.Link}
         disabled={getOperationDisabledValue(operation, scope)}
@@ -68,7 +68,7 @@ export const Operations = <Row, Search extends Dictionary>() => {
           operation.type!
         ) ? (
           <ElButton
-            v-show={operation.disappear?.(scope.row) ?? true}
+            v-show={operation.visible?.(scope.row) ?? true}
             size="small"
             icon={operation.icon}
             circle={!!operation.icon}
@@ -77,7 +77,7 @@ export const Operations = <Row, Search extends Dictionary>() => {
           </ElButton>
         ) : (
           <ElLink
-            v-show={operation.disappear?.(scope.row) ?? true}
+            v-show={operation.visible?.(scope.row) ?? true}
             underline={operation.type === OperationType.Link}
           >
             {operation?.label ?? ""}

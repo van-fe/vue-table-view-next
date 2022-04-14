@@ -7,6 +7,7 @@ import TimeRangeForm from "./TimeRangeForm";
 import DateRangeForm from "./DateRangeForm";
 import CascaderForm from "./CascaderForm";
 import RemoteSelectForm from "./RemoteSelectForm";
+import TreeSelectForm from "./TreeSelectForm";
 
 export default {
   StringForm,
@@ -18,4 +19,5 @@ export default {
   DateRangeForm,
   CascaderForm,
   RemoteSelectForm,
+  TreeSelectForm,
 };
