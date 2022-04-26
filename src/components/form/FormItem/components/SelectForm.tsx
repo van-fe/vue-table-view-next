@@ -8,7 +8,7 @@ import type {
   Dictionary,
   EditForm,
 } from "@/config";
-import { ElOption, ElSelect } from "element-plus";
+import { ElOption, ElSelect, ElTooltip } from "element-plus";
 
 export default defineComponent({
   name: "SelectForm",
@@ -65,7 +65,15 @@ export default defineComponent({
       >
         {selectData.value.map((item) => (
           <ElOption key={item.label} value={item.value} label={item.label}>
-            {item.label}
+            <ElTooltip
+              disabled={!item.tooltip}
+              content={item.tooltip}
+              placement={
+                info.value.extraConfig?.optionTooltipPlacement || "left"
+              }
+            >
+              {item.label}
+            </ElTooltip>
           </ElOption>
         ))}
       </ElSelect>

@@ -9,18 +9,20 @@ import type {
 } from "./common";
 import type { OperationConfig } from "./operation";
 import type { EditConfig } from "@/config/edit";
+import type { ButtonProps } from "element-plus";
 
-export interface CustomListDataWrapper<Row> {
+// eslint-disable-next-line @typescript-eslint/no-empty-interface,@typescript-eslint/no-unused-vars
+export interface CustomListDataWrapper<Row> {}
+
+export interface ListDataWrapper<Row> extends CustomListDataWrapper<Row> {
   [index: string]: Row[] | number;
 }
-
-export type ListDataWrapper<Row> = CustomListDataWrapper<Row>;
 
 export type GetListFunc<Search extends Dictionary, Row> = (
   search: Search
 ) => Promise<ListDataWrapper<Row>>;
 
-export type TreeConfig = {
+export type TreeConfig<Row> = {
   rowField: string;
   parentField: string;
   children: string;
@@ -30,6 +32,8 @@ export type TreeConfig = {
   expandAll: boolean;
   expandRowKeys: string[];
   transform: boolean;
+  lazy: boolean;
+  loadMethod: (param: { row: Row }) => Promise<Row[]>;
 };
 
 export interface InsideGlobalConfig {
@@ -62,6 +66,8 @@ export interface InsideGlobalConfig {
   paginationPosition: "left" | "right" | "center";
   paginationComponentProps?: Record<string, unknown>;
   usePagination: boolean; // true
+  exportButtonText: string;
+  exportButtonProps: Partial<ButtonProps>;
 }
 
 export type GlobalConfigType = Partial<InsideGlobalConfig>;
@@ -94,6 +100,15 @@ export interface InsideConfig<
   paginationComponentProps: Record<string, unknown>;
 
   /**
+   * export
+   */
+  useExport: boolean; // false
+  exportButtonText: string; // Export
+  exportUseBuildInMethod: boolean; // true
+  exportButtonProps: Partial<ButtonProps>;
+  onClickExport: (search: Search) => Promise<void>;
+
+  /**
    * events
    */
   onRadioChange: (row: Row) => void;
@@ -110,7 +125,7 @@ export interface InsideConfig<
   receivePageConfig: ReceivePageFieldConfig;
   getListAfterReset: boolean; // true
   usePagination: boolean; // true
-  treeConfig: Partial<TreeConfig>;
+  treeConfig: Partial<TreeConfig<Row>>;
 
   /**
    * operations

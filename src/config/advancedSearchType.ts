@@ -4,6 +4,7 @@ import type { CascaderData } from "./cascader";
 import type { Component } from "vue";
 import type Node from "element-plus/lib/components/tree/src/model/node";
 import type { TreeData } from "element-plus/es/components/tree/src/tree.type";
+import type { CascaderProps, Placement } from "element-plus";
 
 export type AdvancedSearchDisabled<Search> =
   | boolean
@@ -77,6 +78,7 @@ export interface AdvancedSearchSelectExtra {
   async?: boolean;
   asyncFunc?: AdvancedSearchSelectAsyncFunc;
   filterable?: boolean;
+  optionTooltipPlacement?: Placement;
 }
 
 /**
@@ -118,6 +120,7 @@ export interface AdvancedSearchCascaderExtra {
   multiple?: boolean;
   async?: boolean;
   asyncFunc?: (selectedOptions?: unknown) => Promise<CascaderData[]>;
+  props?: CascaderProps;
 }
 
 /**

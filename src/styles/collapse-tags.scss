@@ -1,0 +1,9 @@
+.collapse-tags {
+  .el-tag {
+    margin-bottom: 8px;
+
+    + .el-tag {
+      margin-left: 5px;
+    }
+  }
+}

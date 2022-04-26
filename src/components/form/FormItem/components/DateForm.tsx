@@ -32,7 +32,7 @@ export default defineComponent({
       () => placeholder.value || "Please Choose Datetime"
     );
     const format = computed(
-      () => info.value.extraConfig?.format ?? "yyyy-MM-dd HH:mm"
+      () => info.value.extraConfig?.format ?? "YYYY-MM-DD HH:mm"
     );
 
     return () => (

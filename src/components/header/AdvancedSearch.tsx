@@ -113,14 +113,14 @@ export const AdvancedSearch = <
             i++
           ) {
             const item = (currentConfig.value.advancedSearch || [])[i];
-            if (
-              count -
-                (currentConfig.value.advancedSearchFormColumnSpan! +
-                  currentConfig.value.advancedSearchFormColumnOffset!) >=
-              24
-            ) {
+            const subtract =
+              count +
+              (currentConfig.value.advancedSearchFormColumnSpan! +
+                currentConfig.value.advancedSearchFormColumnOffset!);
+            if (subtract >= 24) {
               hasInserted = true;
               results.splice(i, 0, createControllerFormItem());
+              count = 0;
             } else {
               count +=
                 (item.colSpan ||
@@ -135,14 +135,41 @@ export const AdvancedSearch = <
           if (!hasInserted) {
             results.push(
               createControllerFormItem(
-                count -
+                24 -
+                  count -
                   (currentConfig.value.advancedSearchFormColumnSpan! +
                     currentConfig.value.advancedSearchFormColumnOffset!)
               )
             );
           }
         } else {
-          results.push(createControllerFormItem());
+          let count = 0;
+          for (
+            let i = 0;
+            i < (currentConfig!.value.advancedSearch || []).length;
+            i++
+          ) {
+            const item = currentConfig!.value.advancedSearch![i];
+            count +=
+              (item.colSpan ||
+                currentConfig!.value.advancedSearchFormColumnSpan ||
+                0) +
+              (item.colOffset ||
+                currentConfig!.value.advancedSearchFormColumnOffset ||
+                0);
+
+            if (count === 24) {
+              count = 0;
+            }
+          }
+          results.push(
+            createControllerFormItem(
+              24 -
+                count -
+                (currentConfig!.value.advancedSearchFormColumnSpan! +
+                  currentConfig!.value.advancedSearchFormColumnOffset!)
+            )
+          );
         }
 
         return results;

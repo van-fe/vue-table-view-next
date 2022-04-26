@@ -1,11 +1,10 @@
 import type { Align, Fixed } from "./common";
-import type { VNode } from "vue";
 import type { ColumnCallbackParams } from "./vxe-table";
 import type { VxeColumnPropTypes } from "vxe-table";
 
 export type ColumnFormat<Row> = (curr: any, row: Row) => string;
 
-export type ColumnRender<Row> = (curr: any, row: Row) => VNode;
+export type ColumnRender<Row> = (curr: any, row: Row) => JSX.Element;
 
 export type ColumnClassNameCallback = (params: ColumnCallbackParams) => string;
 
@@ -37,7 +36,7 @@ export interface Column<Row> {
   format?: ColumnFormat<Row>;
 
   /**
-   * custom render
+   * custom render-content
    */
-  render?: ColumnRender<Row>;
+  renderContent?: ColumnRender<Row>;
 }

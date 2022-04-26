@@ -1,6 +1,5 @@
 import type { SelectData } from "./select";
 import type { CascaderData } from "./cascader";
-import type { VNode } from "vue";
 import type { BaseFormType, Dictionary } from "./common";
 import type {
   AdvancedSearchDateTimePickerExtra,
@@ -11,6 +10,7 @@ import type {
   AdvancedSearchTreeSelectExtra,
 } from "./advancedSearchType";
 import type { FormItemRule } from "element-plus/es/tokens/form";
+import type { CascaderProps } from "element-plus";
 
 export interface EditFormExtraMap<Row> {
   string: EditFormStringExtra;
@@ -55,7 +55,10 @@ export interface EditForm<
   defaultValueSearchFunc?: (val: unknown) => Promise<SelectData | undefined>;
   beforeLoad?: (value: unknown, row: Row | null) => unknown;
   beforeSubmit?: (value: unknown, row: Row | null) => unknown;
-  render?: (value: Row, callback: (result: unknown) => void) => VNode;
+  renderContent?: (
+    value: Row,
+    callback: (result: unknown) => void
+  ) => JSX.Element;
   extraConfig?: EditFormExtraMap<Row>[Type];
 }
 
@@ -86,6 +89,7 @@ export interface EditFormCascaderExtra {
   multiple?: boolean;
   async?: boolean;
   asyncFunc?: (selectedOptions?: unknown) => Promise<CascaderData[]>;
+  props?: CascaderProps;
 }
 
 /**

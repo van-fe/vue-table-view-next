@@ -2,18 +2,21 @@ import type { Config, Dictionary } from "@/config";
 import type { Ref } from "vue";
 import { defineComponent, inject, onBeforeUnmount, onMounted, ref } from "vue";
 import { AdvancedSearch } from "@/components";
-import { ElButton } from "element-plus";
+import { ElButton, ElLoading } from "element-plus";
 import { TableViewEdit } from "@/components/header/TableViewEdit";
 import mountComponent from "@/utils/mountComponent";
 
 export const TableViewHeader = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "TableViewHeader",
-    emits: ["doSearch", "searchChange", "doCreate"],
-    setup(props, { emit, slots }) {
+    emits: ["doSearch", "searchChange", "exportData"],
+    setup(props, { emit, slots, expose }) {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const Tag = AdvancedSearch<Row, Search>();
       const editFormDestroy = ref<ReturnType<typeof mountComponent>>();
+      const searchValueBuildFunc = inject<() => Search>(
+        "searchValueBuildFunc"
+      )!;
 
       function create() {
         editFormDestroy.value = mountComponent(TableViewEdit(), {
@@ -29,11 +32,27 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
         emit("doSearch");
       }
 
-      function editRow(e: CustomEvent<{ row: Dictionary }>) {
+      function editRow(row: Dictionary) {
         editFormDestroy.value = mountComponent(TableViewEdit(), {
           currentConfig,
-          row: e.detail.row,
+          row,
         });
+      }
+
+      const exportButtonRef = ref<typeof ElButton>();
+      async function exportData() {
+        if (currentConfig?.value.exportUseBuildInMethod === false) {
+          if (typeof currentConfig?.value.onClickExport === "function") {
+            const exportButtonLoadingInstance = ElLoading.service({
+              target: exportButtonRef.value!.ref as unknown as HTMLElement,
+            });
+            await currentConfig?.value.onClickExport(searchValueBuildFunc());
+            exportButtonLoadingInstance.close();
+          }
+        } else {
+          // default
+          emit("exportData");
+        }
       }
 
       onMounted(() => {
@@ -45,7 +64,6 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
           "vue-table-view-edit-form-submit-finished",
           editFormSubmitFinished
         );
-        window.addEventListener("vue-table-view-edit-row", editRow);
       });
 
       onBeforeUnmount(() => {
@@ -57,7 +75,10 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
           "vue-table-view-edit-form-submit-finished",
           editFormSubmitFinished
         );
-        window.removeEventListener("vue-table-view-edit-row", editRow);
+      });
+
+      expose({
+        editRow,
       });
 
       return () => (
@@ -74,13 +95,23 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
             />
           )}
           <div class="table-view__header-toolbar">
-            <ElButton
-              v-show={currentConfig?.value.useBuildInCreate}
-              type="primary"
-              onClick={create}
-            >
-              {currentConfig?.value.buildInCreateButtonText || "Create"}
-            </ElButton>
+            {currentConfig?.value.useBuildInCreate ? (
+              <ElButton type="primary" onClick={create}>
+                {currentConfig?.value.buildInCreateButtonText || "Create"}
+              </ElButton>
+            ) : undefined}
+
+            {currentConfig?.value.useExport ? (
+              <ElButton
+                ref={exportButtonRef}
+                type="primary"
+                onClick={exportData}
+                {...(currentConfig?.value?.exportButtonProps ?? {})}
+              >
+                {currentConfig?.value.exportButtonText || "Export"}
+              </ElButton>
+            ) : undefined}
+
             {slots.buttons?.()}
           </div>
         </div>

@@ -9,10 +9,10 @@ class GlobalConfig {
     border: false,
     round: false,
     size: "medium",
-    searchButtonText: "搜索",
-    resetSearchButtonText: "清空",
-    expandButtonText: "展开",
-    emptyText: "暂无数据",
+    searchButtonText: "Search",
+    resetSearchButtonText: "Clear",
+    expandButtonText: "Expand",
+    emptyText: "No Data",
     getListAfterReset: true,
     needCustomColumnDisplay: false,
     customColumnDisplayStored: true,
@@ -27,6 +27,7 @@ class GlobalConfig {
     advancedSearchFormColumnSpan: 6,
     advancedSearchFormColumnOffset: 0,
     getListAtCreated: true,
+    exportButtonText: "Export",
     usePagination: true,
     requestPageConfig: {
       currentPage: "pageNum",
@@ -41,9 +42,10 @@ class GlobalConfig {
       list: "list",
     },
     operationConfig: {
-      headerTitle: "操作",
+      headerTitle: "Operate",
     },
     paginationPosition: "center",
+    exportButtonProps: {},
   };
 
   public get globalConfig(): InsideGlobalConfig {

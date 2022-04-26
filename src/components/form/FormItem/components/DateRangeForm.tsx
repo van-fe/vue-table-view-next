@@ -37,7 +37,7 @@ export default defineComponent({
       placeholder ? (placeholder as unknown as string[]) : ["Start", "End"]
     );
     const format = computed(
-      () => info.value.extraConfig?.format ?? "yyyy-MM-dd HH:mm"
+      () => info.value.extraConfig?.format ?? "YYYY-MM-DD HH:mm"
     );
 
     return () => (

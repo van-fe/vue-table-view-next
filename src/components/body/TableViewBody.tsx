@@ -7,7 +7,7 @@ import type {
   ColumnCallbackParams,
 } from "@/config";
 import type { Ref, VNode } from "vue";
-import { defineComponent, inject, onBeforeUnmount, onMounted, ref } from "vue";
+import { defineComponent, inject, ref } from "vue";
 import { Fixed } from "@/config";
 import { Table as VxeTable, Column as VxeColumn } from "vxe-table";
 import { Operations } from "./Operations";
@@ -15,7 +15,7 @@ import { Operations } from "./Operations";
 export const TableViewBody = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "TableViewBody",
-    setup() {
+    setup(props, { expose }) {
       const tableRef = ref();
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const dataList = inject<Ref<Row[]>>("dataList");
@@ -84,9 +84,9 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
           ),
         };
 
-        if (typeof column.render === "function") {
+        if (typeof column.renderContent === "function") {
           scopedSlots.default = (scope) =>
-            column.render!(scope.row[column.field], scope.row);
+            column.renderContent!(scope.row[column.field], scope.row);
         } else if (typeof column.format === "function") {
           scopedSlots.default = (scope) => (
             <span>{column.format!(scope.row[column.field], scope.row)}</span>
@@ -122,24 +122,13 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
           break;
       }
 
-      function toggleTree(evt: CustomEvent<{ expand: boolean }>) {
-        tableRef.value?.setAllTreeExpand(evt.detail.expand);
+      function toggleTree(expand: boolean) {
+        tableRef.value?.setAllTreeExpand(expand);
       }
 
-      function setEventListener(): void {
-        window.addEventListener("vue-table-view-toggle-tree", toggleTree);
-      }
-
-      function removeEventListener(): void {
-        window.removeEventListener("vue-table-view-toggle-tree", toggleTree);
-      }
-
-      onMounted(() => {
-        setEventListener();
-      });
-
-      onBeforeUnmount(() => {
-        removeEventListener();
+      expose({
+        toggleAllTree: toggleTree,
+        exportData: () => tableRef.value.exportData({ type: "csv" }),
       });
 
       return () => (

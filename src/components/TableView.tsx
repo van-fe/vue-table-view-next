@@ -23,12 +23,12 @@ const TableView = <Row, Search extends Dictionary>() =>
         required: true,
       },
     },
-    setup(props, { slots }) {
+    setup(props, { slots, expose }) {
       const Header = TableViewHeader<Row, Search>();
       const Body = TableViewBody<Row, Search>();
       const Footer = TableViewFooter<Row, Search>();
       const headerRef = ref<typeof Header | null>(null);
-      const bodyRef = ref(null);
+      const bodyRef = ref<ReturnType<typeof TableViewBody> | null>(null);
       const footerRef = ref(null);
 
       const loading = ref(false);
@@ -49,22 +49,31 @@ const TableView = <Row, Search extends Dictionary>() =>
       provide("currentConfig", currentConfig);
       provide("dataList", dataList);
       provide("paginationInfo", paginationInfo);
+      provide("searchValueBuildFunc", buildSearchValue);
 
-      async function getList(): Promise<void> {
+      function buildSearchValue() {
+        const search: Search = { ...searchValue.value };
+
+        // @ts-ignore
+        search[currentConfig!.value.requestPageConfig!.perPage!] =
+          paginationInfo?.value.perPage;
+        // @ts-ignore
+        search[currentConfig!.value.requestPageConfig!.currentPage!] =
+          paginationInfo?.value.currentPage;
+
+        return search;
+      }
+
+      async function getList(param?: Dictionary): Promise<void> {
+        if (param && Object.keys(param).length > 0) {
+          searchValue.value = { ...searchValue.value, ...param };
+        }
+
         if (typeof currentConfig.value.getListFunc !== "function") {
           throw new SyntaxError("The config => getListFunc is not a function");
         } else {
-          const search: Search = { ...searchValue.value };
-
-          // @ts-ignore
-          search[currentConfig!.value.requestPageConfig!.perPage!] =
-            paginationInfo?.value.perPage;
-          // @ts-ignore
-          search[currentConfig!.value.requestPageConfig!.currentPage!] =
-            paginationInfo?.value.currentPage;
-
           loading.value = true;
-          const res = await currentConfig.value.getListFunc(search);
+          const res = await currentConfig.value.getListFunc(buildSearchValue());
           loading.value = false;
 
           dataList.value = res[
@@ -120,10 +129,6 @@ const TableView = <Row, Search extends Dictionary>() =>
         });
       }
 
-      function switchLoading(evt: CustomEvent<{ status: boolean }>): void {
-        loading.value = evt.detail.status;
-      }
-
       function setEventListener(): void {
         window.addEventListener(
           "vue-table-view-current-page-change",
@@ -133,8 +138,6 @@ const TableView = <Row, Search extends Dictionary>() =>
           "vue-table-view-page-size-change",
           onPageSizeChange
         );
-        window.addEventListener("vue-table-view-refresh-table", getList);
-        window.addEventListener("vue-table-view-switch-loading", switchLoading);
       }
 
       function removeEventListener(): void {
@@ -146,14 +149,11 @@ const TableView = <Row, Search extends Dictionary>() =>
           "vue-table-view-page-size-change",
           onPageSizeChange
         );
-        window.removeEventListener("vue-table-view-refresh-table", getList);
-        window.removeEventListener(
-          "vue-table-view-switch-loading",
-          switchLoading
-        );
       }
 
-      function doCreate(): void {}
+      function exportData() {
+        bodyRef.value?.exportData();
+      }
 
       onMounted(async () => {
         if (currentConfig.value.getListAtCreated) {
@@ -171,6 +171,13 @@ const TableView = <Row, Search extends Dictionary>() =>
         buttons: () => slots.buttons?.(),
       };
 
+      expose({
+        refreshList: getList,
+        editRow: (row: Row) => headerRef.value?.editRow(row),
+        switchLoading: (status: boolean) => (loading.value = status),
+        toggleTree: (expand: boolean) => bodyRef.value?.toggleAllTree(expand),
+      });
+
       return () => (
         <div
           class="table-view"
@@ -180,45 +187,13 @@ const TableView = <Row, Search extends Dictionary>() =>
             ref={headerRef}
             onDoSearch={getList}
             onSearchChange={searchChange}
-            onDoCreate={doCreate}
+            onExportData={exportData}
             v-slots={headerSlots}
           />
           <Body ref={bodyRef} />
           {currentConfig.value.usePagination && <Footer ref={footerRef} />}
         </div>
       );
-    },
-    methods: {
-      refreshList() {
-        window.dispatchEvent(new CustomEvent("vue-table-view-refresh-table"));
-      },
-      editRow(row: Row) {
-        window.dispatchEvent(
-          new CustomEvent("vue-table-view-edit-row", {
-            detail: {
-              row,
-            },
-          })
-        );
-      },
-      switchLoading(status: boolean) {
-        window.dispatchEvent(
-          new CustomEvent("vue-table-view-switch-loading", {
-            detail: {
-              status,
-            },
-          })
-        );
-      },
-      toggleTree(expand: boolean) {
-        window.dispatchEvent(
-          new CustomEvent("vue-table-view-toggle-tree", {
-            detail: {
-              expand,
-            },
-          })
-        );
-      },
     },
   });
 

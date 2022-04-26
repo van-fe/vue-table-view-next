@@ -1,6 +1,6 @@
 import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
 import type { Ref } from "vue";
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, reactive, ref, watch } from "vue";
 import type {
   AdvancedSearchType,
   BaseFormType,
@@ -8,13 +8,18 @@ import type {
   Dictionary,
   EditForm,
 } from "@/config";
-import { ElCascader, ElMessage } from "element-plus";
+import type { CascaderProps } from "element-plus";
+import { ElCascader, ElMessage, ElPopper, ElTooltip } from "element-plus";
 
 export default defineComponent({
   name: "CascaderForm",
+  components: {
+    ElTooltip,
+    ElPopper,
+  },
   props: FormMixinsProps,
   emits: FormMixinsEmits,
-  async setup(props, ctx) {
+  setup(props, ctx) {
     const {
       init,
       currentValue,
@@ -116,17 +121,25 @@ export default defineComponent({
       }
     }
 
-    await setCascaderOptions();
+    setCascaderOptions();
+
+    const cascaderProps: CascaderProps = reactive({
+      ...(info.value?.extraConfig?.props ?? {}),
+    });
 
     return () => (
       <ElCascader
         model-value={currentValue.value}
         options={cascaderOption.value}
+        props={cascaderProps}
         expand-trigger="hover"
         change-on-select={false}
         placeholder={placeholder.value}
+        collapse-tags={true}
+        collapse-tags-tooltip={false}
         load-data={loadData}
         clearable={info.value?.clearable ?? true}
+        class="full-width"
         onUpdate:model-value={setCurrentValue}
       />
     );
