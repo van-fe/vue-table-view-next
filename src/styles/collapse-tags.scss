@@ -5,6 +5,10 @@
     .separator {
       padding: 0 2.5px;
     }
+
+    + .el-dropdown {
+      margin-left: 5px;
+    }
   }
 
   .el-tag {

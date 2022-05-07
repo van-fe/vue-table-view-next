@@ -5,16 +5,12 @@ import { BaseFormType } from "@/config";
 import FormItems from "./components";
 import { ElTooltip, ElFormItem } from "element-plus";
 
-// @ts-ignore
-export const FormItemComponent = <
+export default <
   Row extends Dictionary,
   Search extends Dictionary = Dictionary
 >() =>
   defineComponent({
     name: "FormItemComponent",
-    components: {
-      ...FormItems,
-    },
     props: {
       info: {
         type: Object as PropType<
