@@ -11,6 +11,16 @@ More info please see [Document](https://van-fe.github.io/vue-table-view-next/)
 
 > ☑️ Reach to 80% to publish
 
+## Feature
+-[ ] use doc website to show document
+-[x] add preview
+-[x] export data in '. CSV 'format
+-[x] build-in create/edit dialog
+-[x] tree and lazy load tree
+-[ ] advanced search support: tree and so on
+-[ ] provide English document
+-[ ] column display filter stored in local or web server
+
 ## Suit for
 - FE.
 - A major in backend without strict FE requirements.

@@ -8,6 +8,10 @@ export const FormMixinsProps = {
     type: Object as PropType<EditForm | AdvancedSearchType>,
     required: true,
   },
+  row: {
+    type: Object as PropType<Dictionary>,
+    required: true,
+  },
   instanceValue: {
     type: Object,
     required: true,

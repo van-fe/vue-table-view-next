@@ -22,11 +22,11 @@ export const TableViewEdit = () =>
         required: true,
       },
       row: {
-        type: Object,
+        type: Object as PropType<Dictionary>,
         default: null,
       },
     },
-    setup(props) {
+    setup(props, { expose }) {
       const dialogVisible = ref(false);
       const formLoading = ref(false);
       const formLoadingInstance = ref();
@@ -52,6 +52,15 @@ export const TableViewEdit = () =>
 
           item.rule && (rules.value[item.field] = item.rule);
         });
+
+        if (
+          props.currentConfig.value.buildInEditConfig?.rowFieldPassToKeyField
+        ) {
+          form.value[props.currentConfig.value.buildInEditConfig.keyField] =
+            props.row[
+              props.currentConfig.value.buildInEditConfig?.rowFieldPassToKeyField
+            ];
+        }
       }
 
       const isCreate = computed(() => {
@@ -86,12 +95,13 @@ export const TableViewEdit = () =>
                   ? item.visible(props.row, form.value)
                   : item.visible ?? true
               }
-              gutter={10}
             >
               <Tag
                 model-value={form.value[item.field]}
                 // @ts-ignore
                 info={item}
+                // @ts-ignore
+                row={props.row}
                 instance-value={form}
                 onUpdate:model-value={(val: unknown) =>
                   (form.value[item.field] = val)
@@ -218,6 +228,16 @@ export const TableViewEdit = () =>
         dialogVisible.value = true;
       });
 
+      function updateCurrEditForm(data: Record<string, unknown>) {
+        Object.entries(data).forEach(([key, value]) => {
+          form.value[key] = value;
+        });
+      }
+
+      expose({
+        updateCurrEditForm,
+      });
+
       const slots = {
         default() {
           return (
@@ -268,6 +288,7 @@ export const TableViewEdit = () =>
           width={
             props.currentConfig?.value.buildInEditConfig?.dialogWidth ?? "400px"
           }
+          customClass="vue-table-view-edit-dialog"
           destroyOnClose={true}
           beforeClose={onCancel}
         />

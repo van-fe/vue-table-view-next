@@ -4,8 +4,11 @@ import type { EditForm } from "./create";
 import type { ReceivePageFieldConfig, RequestPageFieldConfig } from "./page";
 import type {
   AvailableLanguage,
-  CheckboxChangedRecords,
+  CheckboxChangedEvent,
   Dictionary,
+  RadioChangedEvent,
+  CheckAllEvent,
+  BaseFormType,
 } from "./common";
 import type { OperationConfig } from "./operation";
 import type { EditConfig } from "@/config/edit";
@@ -62,6 +65,7 @@ export interface InsideGlobalConfig {
   emptyText: string;
   requestPageConfig: RequestPageFieldConfig;
   receivePageConfig: ReceivePageFieldConfig;
+  appendParams?: Record<string, unknown>;
   operationConfig: OperationConfig<unknown>;
   paginationPosition: "left" | "right" | "center";
   paginationComponentProps?: Record<string, unknown>;
@@ -111,8 +115,9 @@ export interface InsideConfig<
   /**
    * events
    */
-  onRadioChange: (row: Row) => void;
-  onCheckboxChange: (records: CheckboxChangedRecords<Row>) => void;
+  onRadioChange: (evt: RadioChangedEvent<Row>) => void;
+  onCheckboxChange: (evt: CheckboxChangedEvent<Row>) => void;
+  onCheckAll: (evt: CheckAllEvent<Row>) => void;
   onLoadData: () => void;
 
   /**
@@ -121,8 +126,9 @@ export interface InsideConfig<
   getListAtCreated: boolean; // true
   readonly getListUrl: string; // retain
   getListFunc: GetListFunc<Search, Row>;
-  requestPageConfig: RequestPageFieldConfig;
-  receivePageConfig: ReceivePageFieldConfig;
+  requestPageConfig: Partial<RequestPageFieldConfig>;
+  receivePageConfig: Partial<ReceivePageFieldConfig>;
+  appendParams?: Record<string, unknown>;
   getListAfterReset: boolean; // true
   usePagination: boolean; // true
   treeConfig: Partial<TreeConfig<Row>>;
@@ -138,8 +144,8 @@ export interface InsideConfig<
    */
   useBuildInCreate: boolean; // true
   buildInCreateButtonText: string; // Create
-  buildInEditConfig: EditConfig<Edit>;
-  editForm: EditForm<Row>[];
+  buildInEditConfig: EditConfig<Row, Edit>;
+  editForm: EditForm<Row, BaseFormType, Edit>[];
 
   /**
    * column
@@ -164,5 +170,6 @@ export interface InsideConfig<
 
 export type Config<
   Row extends Dictionary = Dictionary,
-  Search extends Dictionary = Dictionary
-> = Partial<InsideConfig<Row, Search>>;
+  Search extends Dictionary = Dictionary,
+  Edit extends Dictionary = Dictionary
+> = Partial<InsideConfig<Row, Search, Edit>>;

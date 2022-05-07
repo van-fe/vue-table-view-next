@@ -34,7 +34,19 @@ export type Dictionary<T = any> = {
   [key: string]: T;
 };
 
-export interface CheckboxChangedRecords<T> {
+export interface CheckAllEvent<T> {
+  checked: boolean;
+  records: T[];
+}
+
+export interface CheckboxChangedEvent<T> {
   records: T[];
   row: T;
+}
+
+export interface RadioChangedEvent<T> {
+  newValue: T;
+  oldValue: T | undefined;
+  row: T;
+  rowIndex: number;
 }

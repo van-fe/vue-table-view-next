@@ -34,10 +34,15 @@ export default defineComponent({
         : "datetimerange"
     );
     const currentPlaceholder = computed(() =>
-      placeholder ? (placeholder as unknown as string[]) : ["Start", "End"]
+      placeholder
+        ? (placeholder.value as unknown as [string, string])
+        : ["Start", "End"]
     );
-    const format = computed(
-      () => info.value.extraConfig?.format ?? "YYYY-MM-DD HH:mm"
+    const format = computed(() =>
+      info.value.extraConfig?.format ??
+      info.value.type === BaseFormType.DateRangePicker
+        ? "YYYY-MM-DD"
+        : "YYYY-MM-DD HH:mm"
     );
 
     return () => (

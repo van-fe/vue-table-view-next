@@ -8,10 +8,13 @@ export default function (
   const app = createApp(component, props);
   const div = document.createElement("div");
   document.body.append(div);
-  app.mount(div);
+  const instance = app.mount(div);
 
-  return () => {
-    app.unmount();
-    document.body.removeChild(div);
+  return {
+    destroy: () => {
+      app.unmount();
+      document.body.removeChild(div);
+    },
+    instance,
   };
 }

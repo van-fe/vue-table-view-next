@@ -8,9 +8,9 @@ export type ColumnRender<Row> = (curr: any, row: Row) => JSX.Element;
 
 export type ColumnClassNameCallback = (params: ColumnCallbackParams) => string;
 
-export interface Column<Row> {
+export interface Column<Row, Field extends keyof Row = keyof Row> {
   type?: VxeColumnPropTypes.Type; // default
-  field: keyof Row & string;
+  field: Field;
   title: string;
   titleAlign?: Align;
   align?: Align;
@@ -35,7 +35,7 @@ export interface Column<Row> {
    */
   format?: ColumnFormat<Row>;
 
-  /**
+  /**s
    * custom render-content
    */
   renderContent?: ColumnRender<Row>;

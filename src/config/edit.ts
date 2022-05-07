@@ -1,11 +1,12 @@
-export interface EditConfig<Edit> {
+export interface EditConfig<Row, Edit> {
   titlePrefix?: string;
   titleSuffix?: string;
   dialogWidth?: string | number;
   dialogFooterCancelButtonText?: string;
   dialogFooterSubmitButtonText?: string;
 
-  keyField: string;
+  keyField: keyof Edit;
+  rowFieldPassToKeyField?: keyof Row;
   titleCreateText?: string; // Create
   titleEditText?: string; // Edit
   formLabelWidth?: string | number;

@@ -5,6 +5,7 @@ import { BaseFormType } from "@/config";
 import FormItems from "./components";
 import { ElTooltip, ElFormItem } from "element-plus";
 
+// @ts-ignore
 export const FormItemComponent = <
   Row extends Dictionary,
   Search extends Dictionary = Dictionary
@@ -20,6 +21,10 @@ export const FormItemComponent = <
           EditForm<Row> | AdvancedSearchType<Search, Row>
         >,
         required: true,
+      },
+      row: {
+        type: Object as PropType<Row>,
+        default: () => ({}),
       },
       instanceValue: {
         type: Object as PropType<Dictionary>,
@@ -75,6 +80,9 @@ export const FormItemComponent = <
         case BaseFormType.RemoteSearch:
           componentName.value = FormItems.RemoteSelectForm;
           break;
+        case BaseFormType.TreeSelect:
+          componentName.value = FormItems.TreeSelectForm;
+          break;
       }
 
       watch(
@@ -122,6 +130,7 @@ export const FormItemComponent = <
                 model-value={currentValue.value}
                 is={componentName.value}
                 info={props.info}
+                row={props.row}
                 instance-value={props.instanceValue}
                 onUpdate:modelValue={(val: unknown) =>
                   (currentValue.value = val)

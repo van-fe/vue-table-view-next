@@ -1,6 +1,6 @@
 import type { Config, Dictionary } from "@/config";
 import type { Ref, VNode } from "vue";
-import { defineComponent, inject, reactive, ref, watch } from "vue";
+import { defineComponent, inject, nextTick, reactive, ref, watch } from "vue";
 import { cloneDeep } from "lodash-es";
 import {
   ElRow,
@@ -20,7 +20,7 @@ export const AdvancedSearch = <
   defineComponent({
     name: "AdvancedSearch",
     emits: ["doSearch", "searchChange"],
-    setup(props, { emit }) {
+    setup(props, { emit, expose }) {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const defaultRequestParams = reactive<Dictionary>({});
       const search = ref<Dictionary>({});
@@ -212,6 +212,15 @@ export const AdvancedSearch = <
           deep: true,
         }
       );
+
+      async function setAdvancedSearch(s: Record<string, unknown>) {
+        search.value = { ...search.value, ...s };
+        await nextTick(() => {});
+      }
+
+      expose({
+        setAdvancedSearch,
+      });
 
       return () => (
         <div class="table-view__header-advanced-search">

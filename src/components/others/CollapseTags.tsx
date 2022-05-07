@@ -1,5 +1,5 @@
 import type { Component, PropType } from "vue";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref, toRef, watch } from "vue";
 import {
   ElTag,
   ElDropdown,
@@ -8,9 +8,11 @@ import {
   ElIcon,
 } from "element-plus";
 import { ArrowDown } from "@element-plus/icons-vue";
+import { StringHelper } from "@/utils/helper/StringHelper";
 
 export interface VueTableViewCollapseTagsType {
   text: string;
+  params?: Record<string, unknown>;
   /* for tag */
   type?: "" | "success" | "warning" | "info" | "danger";
   closable?: boolean;
@@ -41,9 +43,46 @@ export const CollapseTags = defineComponent({
       type: String,
       default: "More",
     },
+    clickable: {
+      type: Boolean,
+      default: false,
+    },
+    resort: {
+      type: Boolean,
+      default: true,
+    },
+    separator: {
+      type: String,
+      default: "",
+    },
   },
   emits: ["click", "close"],
   setup(props, { emit }) {
+    const tags = toRef(props, "tags");
+
+    function sortTags() {
+      tags.value.sort((a, b) => {
+        const aZhLength = StringHelper.getChineseLetterLength(a.text);
+        const aLength = a.text.length + aZhLength;
+        const bZhLength = StringHelper.getChineseLetterLength(b.text);
+        const bLength = b.text.length + bZhLength;
+
+        return aLength - bLength;
+      });
+    }
+
+    watch(
+      () => tags.value,
+      () => {
+        if (props.resort) {
+          sortTags();
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
+
     function onClick(tag: VueTableViewCollapseTagsType) {
       emit("click", tag);
     }
@@ -53,14 +92,13 @@ export const CollapseTags = defineComponent({
     }
 
     function onCommand(index: number) {
-      emit("click", props.tags[index + props.maxShowOutside]);
+      emit("click", tags.value[index + props.maxShowOutside]);
     }
 
     const slots = reactive({
       dropdown: () => (
-        // @ts-ignore
-        <ElDropdownMenu onCommand={onCommand}>
-          {...props.tags.slice(props.maxShowOutside).map((tag, index) => (
+        <ElDropdownMenu>
+          {...tags.value.slice(props.maxShowOutside).map((tag, index) => (
             <ElDropdownItem {...tag} command={index}>
               {tag.text}
             </ElDropdownItem>
@@ -71,7 +109,7 @@ export const CollapseTags = defineComponent({
 
     function renderExceedTags() {
       return props.tags.length > props.maxShowOutside ? (
-        <ElDropdown v-slots={slots}>
+        <ElDropdown v-slots={slots} onCommand={onCommand}>
           <ElTag type="info">
             {props.moreTagText}
             <ElIcon>
@@ -82,16 +120,27 @@ export const CollapseTags = defineComponent({
       ) : undefined;
     }
 
+    const classList = ref(["collapse-tags"]);
+
+    if (props.clickable) {
+      classList.value.push("clickable");
+    }
+
     return () => (
-      <div class="collapse-tags">
-        {...props.tags.slice(0, props.maxShowOutside).map((tag) => (
-          <ElTag
-            {...tag}
-            onClick={() => onClick(tag)}
-            onClose={() => onClose(tag)}
-          >
-            {tag.text}
-          </ElTag>
+      <div class={classList.value}>
+        {...tags.value.slice(0, props.maxShowOutside).map((tag, index, arr) => (
+          <span class="collapse-tags-item">
+            <ElTag
+              {...tag}
+              onClick={() => onClick(tag)}
+              onClose={() => onClose(tag)}
+            >
+              {tag.text}
+            </ElTag>
+            {index < arr.length - 1 ? (
+              <span class="separator">{props.separator}</span>
+            ) : undefined}
+          </span>
         ))}
         {renderExceedTags()}
       </div>

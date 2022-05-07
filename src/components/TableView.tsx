@@ -52,7 +52,10 @@ const TableView = <Row, Search extends Dictionary>() =>
       provide("searchValueBuildFunc", buildSearchValue);
 
       function buildSearchValue() {
-        const search: Search = { ...searchValue.value };
+        const search: Search = {
+          ...searchValue.value,
+          ...(currentConfig.value.appendParams || {}),
+        };
 
         // @ts-ignore
         search[currentConfig!.value.requestPageConfig!.perPage!] =
@@ -77,7 +80,7 @@ const TableView = <Row, Search extends Dictionary>() =>
           loading.value = false;
 
           dataList.value = res[
-            currentConfig.value.receivePageConfig!.list
+            currentConfig.value.receivePageConfig!.list!
           ] as Row[];
 
           currentConfig.value.receivePageConfig?.currentPage &&
@@ -171,11 +174,27 @@ const TableView = <Row, Search extends Dictionary>() =>
         buttons: () => slots.buttons?.(),
       };
 
+      async function setAdvancedSearch(
+        search: Record<string, unknown>,
+        refreshList = true
+      ) {
+        await headerRef.value?.setAdvancedSearch(search);
+        if (refreshList) {
+          await getList();
+        }
+      }
+
+      function updateCurrEditForm(form: Record<string, unknown>) {
+        headerRef.value?.updateCurrEditForm(form);
+      }
+
       expose({
         refreshList: getList,
         editRow: (row: Row) => headerRef.value?.editRow(row),
         switchLoading: (status: boolean) => (loading.value = status),
         toggleTree: (expand: boolean) => bodyRef.value?.toggleAllTree(expand),
+        setAdvancedSearch,
+        updateCurrEditForm,
       });
 
       return () => (

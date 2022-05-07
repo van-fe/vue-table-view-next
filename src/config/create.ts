@@ -18,7 +18,7 @@ export interface EditFormExtraMap<Row> {
   number: EditFormNumberExtra;
   select: EditFormSelectExtra;
   cascader: EditFormCascaderExtra;
-  "tree-select": EditFormTreeSelectExtra;
+  "tree-select": EditFormTreeSelectExtra<Row>;
   "remote-search": EditFormRemoteSearchExtra<Row>;
   "date-picker": EditFormDateTimePickerExtra;
   "time-picker": EditFormDateTimePickerExtra;
@@ -38,11 +38,11 @@ export interface EditForm<
   Type extends keyof EditFormExtraMap<Row> = BaseFormType,
   Edit extends Dictionary = Dictionary
 > {
-  field: keyof Row & string;
+  field: keyof Edit & string;
   title: string;
   type: Type;
   tooltipText?: string;
-  placeholder?: boolean | string | ((value: Row) => string); // if true, same as title
+  placeholder?: boolean | string | string[] | ((value: Row) => string); // if true, same as title
   clearable?: boolean; // true
   default: unknown | Function;
   rule?: FormItemRule | FormItemRule[];
@@ -75,7 +75,8 @@ export type EditFormSelectExtra = AdvancedSearchSelectExtra;
 /**
  * for tree-select
  */
-export interface EditFormTreeSelectExtra extends AdvancedSearchTreeSelectExtra {
+export interface EditFormTreeSelectExtra<T>
+  extends AdvancedSearchTreeSelectExtra<T> {
   showCheckbox?: boolean;
 }
 

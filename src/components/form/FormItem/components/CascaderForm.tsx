@@ -136,7 +136,6 @@ export default defineComponent({
         change-on-select={false}
         placeholder={placeholder.value}
         collapse-tags={true}
-        collapse-tags-tooltip={false}
         load-data={loadData}
         clearable={info.value?.clearable ?? true}
         class="full-width"

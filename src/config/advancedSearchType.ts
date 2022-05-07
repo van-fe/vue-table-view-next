@@ -21,7 +21,7 @@ export interface AdvancedSearchExtraMap<Row> {
   select: AdvancedSearchSelectExtra;
   cascader: AdvancedSearchCascaderExtra;
   "remote-search": AdvancedSearchRemoteSearchExtra<Row>;
-  "tree-select": AdvancedSearchTreeSelectExtra;
+  "tree-select": AdvancedSearchTreeSelectExtra<Row>;
   "date-picker": AdvancedSearchDateTimePickerExtra;
   "time-picker": AdvancedSearchDateTimePickerExtra;
   "date-time-picker": AdvancedSearchDateTimePickerExtra;
@@ -84,8 +84,12 @@ export interface AdvancedSearchSelectExtra {
 /**
  * for tree-select
  */
-export interface AdvancedSearchTreeSelectExtra
-  extends AdvancedSearchSelectExtra {
+export type AdvancedSearchTreeSelectAsyncFunc<T> = (
+  search: string,
+  row?: T
+) => Promise<SelectData[]>;
+
+export interface AdvancedSearchTreeSelectExtra<T> {
   showCheckbox?: boolean;
   checkStrictly?: boolean;
   filterNodeMethod?: (value: unknown, data: TreeData, node: Node) => boolean;
@@ -108,6 +112,14 @@ export interface AdvancedSearchTreeSelectExtra
     dropNode: Node,
     type: "prev" | "inner" | "next"
   ) => boolean;
+  selectData?: SelectData[];
+  asyncFunc: AdvancedSearchTreeSelectAsyncFunc<T>;
+  max?: number;
+  min?: number;
+  multiple?: boolean;
+  async?: boolean;
+  filterable?: boolean;
+  optionTooltipPlacement?: Placement;
 }
 
 /**

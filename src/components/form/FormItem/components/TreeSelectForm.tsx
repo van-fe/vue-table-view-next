@@ -2,13 +2,12 @@ import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
 import type { Ref } from "vue";
 import { defineComponent, ref, watch } from "vue";
 import type {
-  SelectData,
   BaseFormType,
-  AdvancedSearchSelectExtra,
   Dictionary,
   EditForm,
   AdvancedSearchType,
   TreeSelectData,
+  AdvancedSearchTreeSelectExtra,
 } from "@/config";
 import { ElTreeSelect } from "element-plus";
 
@@ -36,19 +35,22 @@ export default defineComponent({
     async function loadSelectData(search = ""): Promise<void> {
       if (typeof info.value.extraConfig?.asyncFunc === "function") {
         loading.value = true;
-        selectData.value = await info.value.extraConfig?.asyncFunc(search);
+        selectData.value = await info.value.extraConfig?.asyncFunc(
+          search,
+          props.row!
+        );
         loading.value = false;
       }
     }
 
     watch(
       () => info.value.extraConfig,
-      async (val: AdvancedSearchSelectExtra | undefined) => {
+      async (val: AdvancedSearchTreeSelectExtra<Dictionary> | undefined) => {
         if (val && val.selectData) {
           selectData.value = val.selectData;
         }
         if (val?.async) {
-          await loadSelectData();
+          await loadSelectData("");
         }
       },
       {
@@ -66,6 +68,9 @@ export default defineComponent({
         filterable={info.value.extraConfig?.filterable || false}
         loading={loading.value}
         clearable={info.value?.clearable ?? true}
+        show-checkbox={info.value.extraConfig?.showCheckbox || false}
+        default-expand-all={info.value.extraConfig?.defaultExpandAll || false}
+        data={selectData.value}
         onUpdate:model-value={setCurrentValue}
       />
     );

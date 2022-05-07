@@ -1,10 +1,12 @@
 import type {
-  CheckboxChangedRecords,
+  CheckboxChangedEvent,
   Config,
   Dictionary,
   ColumnFormatterParam,
   Column,
   ColumnCallbackParams,
+  RadioChangedEvent,
+  CheckAllEvent,
 } from "@/config";
 import type { Ref, VNode } from "vue";
 import { defineComponent, inject, ref } from "vue";
@@ -96,15 +98,21 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
         return scopedSlots;
       }
 
-      function onRadioChange(row: Row): void {
+      function onRadioChange(value: RadioChangedEvent<Row>): void {
         if (typeof currentConfig?.value?.onRadioChange === "function") {
-          currentConfig?.value?.onRadioChange(row);
+          currentConfig?.value?.onRadioChange(value);
         }
       }
 
-      function onCheckboxChange(records: CheckboxChangedRecords<Row>): void {
+      function onCheckboxChange(records: CheckboxChangedEvent<Row>): void {
         if (typeof currentConfig?.value?.onCheckboxChange === "function") {
           currentConfig?.value?.onCheckboxChange(records);
+        }
+      }
+
+      function onCheckAll(records: CheckAllEvent<Row>): void {
+        if (typeof currentConfig?.value?.onCheckAll === "function") {
+          currentConfig?.value?.onCheckAll(records);
         }
       }
 
@@ -143,9 +151,9 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
             round={currentConfig?.value.round}
             empty-text={currentConfig?.value.emptyText}
             tree-config={currentConfig?.value.treeConfig}
-            on-checkbox-all={onCheckboxChange}
-            on-radio-change={onRadioChange}
-            on-checkbox-change={onCheckboxChange}
+            onCheckboxAll={onCheckAll}
+            onRadioChange={onRadioChange}
+            onCheckboxChange={onCheckboxChange}
           >
             {...specialColumnRender()}
             {columnRender()}

@@ -13,15 +13,21 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
     setup(props, { emit, slots, expose }) {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const Tag = AdvancedSearch<Row, Search>();
-      const editFormDestroy = ref<ReturnType<typeof mountComponent>>();
+      const editFormInstance = ref();
+      const editFormDestroy = ref<() => void>();
+      const advancedSearch = ref<ReturnType<typeof AdvancedSearch>>();
       const searchValueBuildFunc = inject<() => Search>(
         "searchValueBuildFunc"
       )!;
 
       function create() {
-        editFormDestroy.value = mountComponent(TableViewEdit(), {
+        const target = mountComponent(TableViewEdit(), {
           currentConfig,
+          row: {},
         });
+
+        editFormDestroy.value = target.destroy;
+        editFormInstance.value = target.instance;
       }
 
       function destroyEditForm() {
@@ -33,10 +39,21 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
       }
 
       function editRow(row: Dictionary) {
-        editFormDestroy.value = mountComponent(TableViewEdit(), {
+        const target = mountComponent(TableViewEdit(), {
           currentConfig,
           row,
         });
+
+        editFormDestroy.value = target.destroy;
+        editFormInstance.value = target.instance;
+      }
+
+      async function setAdvancedSearch(search: Record<string, unknown>) {
+        await advancedSearch.value?.setAdvancedSearch(search);
+      }
+
+      function updateCurrEditForm(form: Record<string, unknown>) {
+        editFormInstance.value.updateCurrEditForm(form);
       }
 
       const exportButtonRef = ref<typeof ElButton>();
@@ -79,13 +96,15 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
 
       expose({
         editRow,
+        setAdvancedSearch,
+        updateCurrEditForm,
       });
 
       return () => (
         <div class="table-view__header">
           {currentConfig?.value.useAdvancedSearch === false ? undefined : (
             <Tag
-              ref="advancedSearch"
+              ref={advancedSearch}
               style={{
                 minHeight: currentConfig?.value.advancedSearchDefaultHeight,
                 width: "100%",

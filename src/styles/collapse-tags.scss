@@ -1,9 +1,32 @@
 .collapse-tags {
+  margin-bottom: -8px;
+
+  &-item {
+    .separator {
+      padding: 0 2.5px;
+    }
+  }
+
   .el-tag {
     margin-bottom: 8px;
 
-    + .el-tag {
+    + .el-dropdown {
       margin-left: 5px;
+
+      .el-icon {
+        margin-left: 5px;
+      }
+    }
+
+    .el-tag__content {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  &.clickable {
+    .el-tag {
+      cursor: pointer;
     }
   }
 }
