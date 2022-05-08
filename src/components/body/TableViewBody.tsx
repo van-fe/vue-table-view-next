@@ -157,7 +157,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
           >
             {...specialColumnRender()}
             {columnRender()}
-            {currentConfig?.value.useOperations
+            {currentConfig?.value.useOperations !== false
               ? Operations<Row, Search>()
               : undefined}
           </VxeTable>
