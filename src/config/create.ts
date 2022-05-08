@@ -16,7 +16,7 @@ export interface EditFormExtraMap<Row> {
   string: EditFormStringExtra;
   textarea: EditFormStringExtra;
   number: EditFormNumberExtra;
-  select: EditFormSelectExtra;
+  select: EditFormSelectExtra<Row>;
   cascader: EditFormCascaderExtra;
   "tree-select": EditFormTreeSelectExtra<Row>;
   "remote-search": EditFormRemoteSearchExtra<Row>;
@@ -70,7 +70,7 @@ export type EditFormStringExtra = AdvancedSearchStringExtra;
 /**
  * for select
  */
-export type EditFormSelectExtra = AdvancedSearchSelectExtra;
+export type EditFormSelectExtra<Row> = AdvancedSearchSelectExtra<Row>;
 
 /**
  * for tree-select

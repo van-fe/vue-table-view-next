@@ -188,8 +188,14 @@ const TableView = <Row, Search extends Dictionary>() =>
         headerRef.value?.updateCurrEditForm(form);
       }
 
+      function setListData(rows: Row[], total: number) {
+        dataList.value = rows;
+        paginationInfo.value.total = total;
+      }
+
       expose({
         refreshList: getList,
+        setListData,
         editRow: (row: Row) => headerRef.value?.editRow(row),
         switchLoading: (status: boolean) => (loading.value = status),
         toggleTree: (expand: boolean) => bodyRef.value?.toggleAllTree(expand),

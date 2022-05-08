@@ -124,7 +124,6 @@ export interface InsideConfig<
    * get-list
    */
   getListAtCreated: boolean; // true
-  readonly getListUrl: string; // retain
   getListFunc: GetListFunc<Search, Row>;
   requestPageConfig: Partial<RequestPageFieldConfig>;
   receivePageConfig: Partial<ReceivePageFieldConfig>;

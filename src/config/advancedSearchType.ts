@@ -14,11 +14,11 @@ export type AdvancedSearchVisible<Search> =
   | boolean
   | ((allSearch: Search) => boolean);
 
-export interface AdvancedSearchExtraMap<Row> {
+export interface AdvancedSearchExtraMap<Row, Search> {
   string: AdvancedSearchStringExtra;
   textarea: AdvancedSearchStringExtra;
   number: AdvancedSearchNumberExtra;
-  select: AdvancedSearchSelectExtra;
+  select: AdvancedSearchSelectExtra<Search>;
   cascader: AdvancedSearchCascaderExtra;
   "remote-search": AdvancedSearchRemoteSearchExtra<Row>;
   "tree-select": AdvancedSearchTreeSelectExtra<Row>;
@@ -33,7 +33,7 @@ export interface AdvancedSearchExtraMap<Row> {
 export interface AdvancedSearchType<
   Search extends Dictionary = Dictionary,
   Row extends Dictionary = Dictionary,
-  Type extends keyof AdvancedSearchExtraMap<Row> = BaseFormType
+  Type extends keyof AdvancedSearchExtraMap<Row, Search> = BaseFormType
 > {
   field: keyof Search & string;
   title: string;
@@ -47,9 +47,8 @@ export interface AdvancedSearchType<
   colSpan?: number;
   colOffset?: number;
   labelWidth?: string;
-  extraConfig?: AdvancedSearchExtraMap<Row>[Type];
+  extraConfig?: AdvancedSearchExtraMap<Row, Search>[Type];
   beforeLoad?: never;
-  listenFieldsToSearch?: never;
   listenFieldsChangeToReset?: never;
   defaultValueSearchFunc?: never;
 }
@@ -66,19 +65,22 @@ export interface AdvancedSearchStringExtra {
 /**
  * for select
  */
-export type AdvancedSearchSelectAsyncFunc = (
-  search?: string
+export type AdvancedSearchSelectAsyncFunc<Search> = (
+  search?: string,
+  fullSearchData?: Search
 ) => Promise<SelectData[]>;
 
-export interface AdvancedSearchSelectExtra {
+export interface AdvancedSearchSelectExtra<Search> {
   selectData?: SelectData[];
   max?: number;
   min?: number;
   multiple?: boolean;
   async?: boolean;
-  asyncFunc?: AdvancedSearchSelectAsyncFunc;
+  asyncFunc?: AdvancedSearchSelectAsyncFunc<Search>;
   filterable?: boolean;
   optionTooltipPlacement?: Placement;
+  listenFieldsToSearch?: string[];
+  relyFieldsToSearch?: string[];
 }
 
 /**

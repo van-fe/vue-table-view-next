@@ -73,9 +73,6 @@ export default <
         case BaseFormType.TimeRangePicker:
           componentName.value = FormItems.TimeRangeForm;
           break;
-        case BaseFormType.RemoteSearch:
-          componentName.value = FormItems.RemoteSelectForm;
-          break;
         case BaseFormType.TreeSelect:
           componentName.value = FormItems.TreeSelectForm;
           break;

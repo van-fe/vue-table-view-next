@@ -1,7 +1,6 @@
 import type { ExtractPropTypes, PropType, SetupContext } from "vue";
 import { computed, reactive, ref, toRefs, watch } from "vue";
 import type { Dictionary, EditForm, AdvancedSearchType } from "@/config";
-import { cloneDeep } from "lodash-es";
 
 export const FormMixinsProps = {
   info: {
@@ -30,7 +29,6 @@ export default function FormMixin(
   { emit }: SetupContext<typeof FormMixinsEmits>
 ) {
   const currentValue = ref<null | unknown>(null);
-  let comparedDataInstance = reactive<Dictionary>({});
 
   const placeholder = computed(() => {
     if (props.info && typeof props.info.placeholder !== "undefined") {
@@ -54,20 +52,7 @@ export default function FormMixin(
       : props.info.disabled;
   });
 
-  const comparedData = computed<Dictionary>({
-    get() {
-      return comparedDataInstance;
-    },
-    set(val: Dictionary) {
-      if (JSON.stringify(val) !== JSON.stringify(comparedDataInstance)) {
-        comparedDataInstance = cloneDeep(val);
-      }
-    },
-  });
-
   const callbackFunc = reactive({
-    noticeInit: () => {},
-    noticeHide: () => {},
     afterValueChanged: () => {},
     afterCurrentValueChanged: () => {},
   });
@@ -80,9 +65,6 @@ export default function FormMixin(
     currentValue: (val: any) => {
       callbackFunc.afterCurrentValueChanged();
       emit("update:modelValue", val);
-    },
-    instanceValue: (val: Dictionary) => {
-      comparedData.value = val;
     },
   });
 
@@ -99,18 +81,14 @@ export default function FormMixin(
 
     watch(() => props.modelValue, watchFunc.value);
 
-    watch(() => props.instanceValue, watchFunc.instanceValue);
-
     setValue();
   };
 
   return {
     ...toRefs(props),
     currentValue,
-    comparedDataInstance,
     placeholder,
     disabled,
-    comparedData,
     callbackFunc,
     watchFunc,
     setCurrentValue,
