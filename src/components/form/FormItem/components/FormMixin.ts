@@ -76,6 +76,14 @@ export default function FormMixin(
     currentValue.value = val;
   }
 
+  function setCurrentValueToDefault(): void {
+    if (typeof props.info!.default === "function") {
+      currentValue.value = props.info!.default();
+    } else {
+      currentValue.value = props.info!.default;
+    }
+  }
+
   const init = () => {
     watch(currentValue, watchFunc.currentValue);
 
@@ -92,6 +100,7 @@ export default function FormMixin(
     callbackFunc,
     watchFunc,
     setCurrentValue,
+    setCurrentValueToDefault,
     setValue,
     init,
   };

@@ -21,6 +21,7 @@ export default defineComponent({
       info: currInfo,
       placeholder,
       setCurrentValue,
+      setCurrentValueToDefault,
       instanceValue,
     } = FormMixin(props, ctx);
     init();
@@ -38,7 +39,7 @@ export default defineComponent({
         if (enableSearch.value) {
           selectData.value = await info.value.extraConfig?.asyncFunc(
             search,
-            instanceValue
+            instanceValue?.value
           );
         }
         loading.value = false;
@@ -78,11 +79,17 @@ export default defineComponent({
                   () => instanceValue!.value![field],
                   () => {
                     loadSelectData();
+                  },
+                  {
+                    immediate: true,
                   }
                 )
               );
           });
         }
+      },
+      {
+        immediate: true,
       }
     );
 
@@ -98,19 +105,52 @@ export default defineComponent({
 
           relyFieldsCallback.push(
             watch(
-              () => instanceValue,
-              (curr) => {
-                if (
-                  fields.filter((field) => curr?.value?.[field]).length ===
-                  fields.length
-                ) {
-                  enableSearch.value = true;
-                  loadSelectData();
+              () => instanceValue?.value,
+              (curr, old) => {
+                if (curr) {
+                  let diff: Partial<typeof curr> = {};
+
+                  if (old && curr) {
+                    Object.entries(curr).forEach(([key, value]) => {
+                      if (value !== old[key]) {
+                        diff![key] = value;
+                      }
+                    });
+                  } else {
+                    diff = curr;
+                  }
+
+                  if (fields.filter((field) => curr?.[field]).length === 0) {
+                    selectData.value = [];
+                    setCurrentValueToDefault();
+                  }
+
+                  if (
+                    Object.keys(diff!).length === 1 &&
+                    info.value.field in diff!
+                  ) {
+                    return;
+                  }
+
+                  if (
+                    fields.filter((field) => curr?.[field]).length ===
+                    fields.length
+                  ) {
+                    enableSearch.value = true;
+                    loadSelectData();
+                  }
                 }
+              },
+              {
+                immediate: true,
+                deep: true,
               }
             )
           );
         }
+      },
+      {
+        immediate: true,
       }
     );
 
