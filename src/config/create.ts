@@ -11,6 +11,7 @@ import type {
 } from "./advancedSearchType";
 import type { FormItemRule } from "element-plus/es/tokens/form";
 import type { CascaderProps } from "element-plus";
+import type { Ref } from "vue";
 
 export interface EditFormExtraMap<Row> {
   string: EditFormStringExtra;
@@ -84,7 +85,7 @@ export interface EditFormTreeSelectExtra<T>
  * for cascader
  */
 export interface EditFormCascaderExtra {
-  cascaderData?: CascaderData[];
+  cascaderData?: CascaderData[] | Ref<CascaderData[]>;
   max?: number;
   min?: number;
   multiple?: boolean;

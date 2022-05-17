@@ -55,6 +55,10 @@ export const CollapseTags = defineComponent({
       type: String,
       default: "",
     },
+    displayInOneLine: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ["click", "close"],
   setup(props, { emit }) {
@@ -124,6 +128,10 @@ export const CollapseTags = defineComponent({
 
     if (props.clickable) {
       classList.value.push("clickable");
+    }
+
+    if (props.displayInOneLine) {
+      classList.value.push("one-line");
     }
 
     return () => (

@@ -42,7 +42,7 @@ export type TreeConfig<Row> = {
 export interface InsideGlobalConfig {
   language: AvailableLanguage;
   stripe: boolean;
-  border: boolean;
+  border: boolean | "default" | "full" | "outer" | "inner" | "none";
   round: boolean;
   size: "medium" | "small" | "large";
   searchButtonText: string;
@@ -63,6 +63,7 @@ export interface InsideGlobalConfig {
   advancedSearchFormColumnOffset: number; // 2
   getListAtCreated: boolean;
   emptyText: string;
+  emptyRender?: () => JSX.Element;
   requestPageConfig: RequestPageFieldConfig;
   receivePageConfig: ReceivePageFieldConfig;
   appendParams?: Record<string, unknown>;
@@ -86,7 +87,7 @@ export interface InsideConfig<
    */
   height: string; // default 100%. You can set percentage / has unit number
   stripe: boolean;
-  border: boolean;
+  border: boolean | "default" | "full" | "outer" | "inner" | "none";
   round: boolean;
   size: "default" | "small" | "large";
   needPagination: boolean; // true
@@ -97,6 +98,7 @@ export interface InsideConfig<
   customColumnDisplayStored: boolean; // true
   loadingDebounceTime: number; // 0.5s
   emptyText: string; // "No Data"
+  emptyRender: () => JSX.Element;
   needCheckbox: boolean;
   needRadio: boolean;
   needSeq: boolean;

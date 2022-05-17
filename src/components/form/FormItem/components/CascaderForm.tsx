@@ -1,6 +1,6 @@
 import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
 import type { Ref } from "vue";
-import { defineComponent, reactive, ref, watch } from "vue";
+import { defineComponent, reactive, ref, unref, watch } from "vue";
 import type {
   AdvancedSearchType,
   BaseFormType,
@@ -62,7 +62,7 @@ export default defineComponent({
       if (info.value.extraConfig?.async === true) {
         cascaderOption.value = await info.value.extraConfig.asyncFunc!();
       } else if (info.value.extraConfig?.cascaderData) {
-        cascaderOption.value = info.value.extraConfig.cascaderData;
+        cascaderOption.value = unref(info.value.extraConfig.cascaderData);
       }
     }
 

@@ -139,9 +139,20 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
         exportData: () => tableRef.value.exportData({ type: "csv" }),
       });
 
+      const slots = {
+        empty() {
+          return (
+            currentConfig?.value.emptyRender?.() ?? (
+              <span>{currentConfig?.value.emptyText}</span>
+            )
+          );
+        },
+      };
+
       return () => (
         <div v-loading={loading?.value} class="table-view__body">
           <VxeTable
+            v-slots={slots}
             ref={tableRef}
             height="100%"
             data={dataList?.value}

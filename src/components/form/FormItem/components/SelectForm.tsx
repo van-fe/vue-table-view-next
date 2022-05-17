@@ -1,6 +1,6 @@
 import FormMixin, { FormMixinsEmits, FormMixinsProps } from "./FormMixin";
 import type { Ref, WatchStopHandle } from "vue";
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, unref, watch } from "vue";
 import type {
   SelectData,
   BaseFormType,
@@ -50,7 +50,7 @@ export default defineComponent({
       () => info.value.extraConfig,
       async (val: AdvancedSearchSelectExtra<Dictionary> | undefined) => {
         if (val && val.selectData) {
-          selectData.value = val.selectData;
+          selectData.value = unref(val.selectData);
         }
         if (val?.async) {
           await loadSelectData();
@@ -58,6 +58,15 @@ export default defineComponent({
       },
       {
         immediate: true,
+      }
+    );
+
+    watch(
+      () => info.value.extraConfig?.selectData,
+      (val) => {
+        if (val) {
+          selectData.value = unref(val);
+        }
       }
     );
 

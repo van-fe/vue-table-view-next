@@ -1,7 +1,7 @@
 import type { SelectData } from "./select";
 import type { BaseFormType, Dictionary } from "./common";
 import type { CascaderData } from "./cascader";
-import type { Component } from "vue";
+import type { Component, Ref } from "vue";
 import type Node from "element-plus/lib/components/tree/src/model/node";
 import type { TreeData } from "element-plus/es/components/tree/src/tree.type";
 import type { CascaderProps, Placement } from "element-plus";
@@ -71,7 +71,7 @@ export type AdvancedSearchSelectAsyncFunc<Search> = (
 ) => Promise<SelectData[]>;
 
 export interface AdvancedSearchSelectExtra<Search> {
-  selectData?: SelectData[];
+  selectData?: SelectData[] | Ref<SelectData[]>;
   max?: number;
   min?: number;
   multiple?: boolean;
@@ -128,7 +128,7 @@ export interface AdvancedSearchTreeSelectExtra<T> {
  * for cascader
  */
 export interface AdvancedSearchCascaderExtra {
-  cascaderData?: CascaderData[];
+  cascaderData?: CascaderData[] | Ref<CascaderData[]>;
   max?: number;
   min?: number;
   multiple?: boolean;
