@@ -22,11 +22,11 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'vueTableViewNext',
+      name: 'VueTableViewNext',
       fileName: (format) => `vue-table-view-next.${format}.js`,
     },
     rollupOptions: {
-      external: ['vue', 'element-plus'],
+      external: ['vue', 'ElementPlus'],
       output: {
         exports: "named",
         globals: {

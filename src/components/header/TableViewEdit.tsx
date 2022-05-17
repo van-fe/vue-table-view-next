@@ -1,4 +1,4 @@
-import type { PropType, Ref, VNode } from "vue";
+import type { PropType, Ref, VNode, Component } from "vue";
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import type { Dictionary, Config } from "@/config";
 import {
@@ -84,7 +84,7 @@ export const TableViewEdit = () =>
       });
 
       function createControllerFormItem(): VNode[] {
-        const Tag = FormItemComponent();
+        const Tag = FormItemComponent() as Component;
         const rows: VNode[] = [];
 
         (props.currentConfig?.value.editForm || []).map((item) => {
@@ -96,17 +96,20 @@ export const TableViewEdit = () =>
                   : item.visible ?? true
               }
             >
-              <Tag
-                model-value={form.value[item.field]}
+              {
                 // @ts-ignore
-                info={item}
-                // @ts-ignore
-                row={props.row}
-                instance-value={form}
-                onUpdate:model-value={(val: unknown) =>
-                  (form.value[item.field] = val)
-                }
-              />
+                <Tag
+                  model-value={form.value[item.field]}
+                  // @ts-ignore
+                  info={item}
+                  // @ts-ignore
+                  row={props.row}
+                  instance-value={form}
+                  onUpdate:model-value={(val: unknown) =>
+                    (form.value[item.field] = val)
+                  }
+                />
+              }
             </ElRow>
           );
         });

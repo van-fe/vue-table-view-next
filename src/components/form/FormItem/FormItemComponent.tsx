@@ -1,4 +1,4 @@
-import type { PropType } from "vue";
+import type { Component, PropType } from "vue";
 import { defineComponent, ref, shallowRef, watch } from "vue";
 import type { Dictionary, EditForm, AdvancedSearchType } from "@/config";
 import { BaseFormType } from "@/config";
@@ -8,7 +8,7 @@ import { ElTooltip, ElFormItem } from "element-plus";
 export default <
   Row extends Dictionary,
   Search extends Dictionary = Dictionary
->() =>
+>(): Component =>
   defineComponent({
     name: "FormItemComponent",
     props: {

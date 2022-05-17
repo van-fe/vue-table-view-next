@@ -1,5 +1,5 @@
 import type { Config, Dictionary } from "@/config";
-import type { Ref, VNode } from "vue";
+import type { Component, Ref, VNode } from "vue";
 import { defineComponent, inject, nextTick, reactive, ref, watch } from "vue";
 import { cloneDeep } from "lodash-es";
 import {
@@ -63,7 +63,7 @@ export const AdvancedSearch = <
       }
 
       function createSearchFormItems(): VNode[] {
-        const Tag = FormItemComponent<Row, Search>();
+        const Tag = FormItemComponent<Row, Search>() as Component;
         const chunks: VNode[] = [];
 
         (currentConfig?.value.advancedSearch || []).map((item) => {
@@ -83,15 +83,18 @@ export const AdvancedSearch = <
                 currentConfig?.value.advancedSearchFormColumnOffset
               }
             >
-              <Tag
-                model-value={search!.value[item.field]}
-                info={item}
-                instance-value={search!.value}
-                label-col={item.labelWidth ?? "auto"}
-                onUpdate:model-value={(val: unknown) =>
-                  (search!.value[item.field] = val)
-                }
-              />
+              {
+                // @ts-ignore
+                <Tag
+                  model-value={search!.value[item.field]}
+                  info={item}
+                  instance-value={search!.value}
+                  label-col={item.labelWidth ?? "auto"}
+                  onUpdate:model-value={(val: unknown) =>
+                    (search!.value[item.field] = val)
+                  }
+                />
+              }
             </ElCol>
           );
         });
