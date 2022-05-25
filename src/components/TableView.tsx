@@ -24,6 +24,8 @@ const TableView = <Row, Search extends Dictionary>() =>
       },
     },
     setup(props, { slots, expose }) {
+      const currTableSymbol = Symbol();
+
       const Header = TableViewHeader<Row, Search>();
       const Body = TableViewBody<Row, Search>();
       const Footer = TableViewFooter<Row, Search>();
@@ -45,6 +47,7 @@ const TableView = <Row, Search extends Dictionary>() =>
         pageAmount: 0,
       });
 
+      provide("currTableSymbol", currTableSymbol);
       provide("loading", loading);
       provide("currentConfig", currentConfig);
       provide("dataList", dataList);
@@ -118,18 +121,26 @@ const TableView = <Row, Search extends Dictionary>() =>
         searchValue.value = val;
       }
 
-      function onCurrentPageChange(evt: CustomEvent<{ page: number }>): void {
-        paginationInfo.value.currentPage = evt.detail.page;
-        getList().then(() => {
-          // ... do sth
-        });
+      function onCurrentPageChange(
+        evt: CustomEvent<{ page: number; id: symbol }>
+      ): void {
+        if (currTableSymbol === evt.detail.id) {
+          paginationInfo.value.currentPage = evt.detail.page;
+          getList().then(() => {
+            // ... do sth
+          });
+        }
       }
 
-      function onPageSizeChange(evt: CustomEvent<{ size: number }>): void {
-        paginationInfo.value.perPage = evt.detail.size;
-        getList().then(() => {
-          // ... do sth
-        });
+      function onPageSizeChange(
+        evt: CustomEvent<{ size: number; id: symbol }>
+      ): void {
+        if (currTableSymbol === evt.detail.id) {
+          paginationInfo.value.perPage = evt.detail.size;
+          getList().then(() => {
+            // ... do sth
+          });
+        }
       }
 
       function setEventListener(): void {

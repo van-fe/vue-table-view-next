@@ -19,6 +19,7 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
       const searchValueBuildFunc = inject<() => Search>(
         "searchValueBuildFunc"
       )!;
+      const currTableSymbol = inject<symbol>("currTableSymbol");
 
       function create() {
         const target = mountComponent(TableViewEdit(), {
@@ -30,12 +31,12 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
         editFormInstance.value = target.instance;
       }
 
-      function destroyEditForm() {
-        editFormDestroy.value?.();
+      function destroyEditForm(evt: CustomEvent<{ id: symbol }>) {
+        evt.detail.id === currTableSymbol && editFormDestroy.value?.();
       }
 
-      function editFormSubmitFinished() {
-        emit("doSearch");
+      function editFormSubmitFinished(evt: CustomEvent<{ id: symbol }>) {
+        evt.detail.id === currTableSymbol && emit("doSearch");
       }
 
       function editRow(row: Dictionary) {

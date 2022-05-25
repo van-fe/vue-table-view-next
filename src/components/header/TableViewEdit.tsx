@@ -1,5 +1,5 @@
 import type { PropType, Ref, VNode, Component } from "vue";
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, inject, onMounted, ref, watch } from "vue";
 import type { Dictionary, Config } from "@/config";
 import {
   ElButton,
@@ -34,6 +34,7 @@ export const TableViewEdit = () =>
       const form = ref<Dictionary>({});
       const formRef = ref();
       const rules = ref<Dictionary<FormItemRule | FormItemRule[]>>({});
+      const currTableSymbol = inject<symbol>("currTableSymbol");
       loadFormData();
 
       function loadFormData() {
@@ -213,7 +214,11 @@ export const TableViewEdit = () =>
       function onSubmitSuccess() {
         formLoading.value = false;
         window.dispatchEvent(
-          new CustomEvent("vue-table-view-edit-form-submit-finished")
+          new CustomEvent("vue-table-view-edit-form-submit-finished", {
+            detail: {
+              id: currTableSymbol,
+            },
+          })
         );
         setTimeout(() => {
           onCancel();
@@ -223,7 +228,11 @@ export const TableViewEdit = () =>
       function onCancel() {
         dialogVisible.value = false;
         window.dispatchEvent(
-          new CustomEvent("vue-table-view-destroy-edit-form")
+          new CustomEvent("vue-table-view-destroy-edit-form", {
+            detail: {
+              id: currTableSymbol,
+            },
+          })
         );
       }
 

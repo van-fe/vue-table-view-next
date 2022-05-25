@@ -9,12 +9,14 @@ export const TableViewFooter = <Row, Search extends Dictionary>() =>
     setup() {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const paginationInfo = inject<Ref<PaginationData>>("paginationInfo");
+      const currTableSymbol = inject<symbol>("currTableSymbol");
 
       function onCurrentChange(page: number): void {
         window.dispatchEvent(
           new CustomEvent("vue-table-view-current-page-change", {
             detail: {
               page,
+              id: currTableSymbol,
             },
           })
         );
@@ -25,6 +27,7 @@ export const TableViewFooter = <Row, Search extends Dictionary>() =>
           new CustomEvent("vue-table-view-page-size-change", {
             detail: {
               size,
+              id: currTableSymbol,
             },
           })
         );
