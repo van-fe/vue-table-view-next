@@ -26,7 +26,7 @@ export default defineConfig({
       fileName: (format) => `vue-table-view-next.${format}.js`,
     },
     rollupOptions: {
-      external: ['vue', 'ElementPlus'],
+      external: ['vue', 'ElementPlus', 'IconsVue', 'VxeTable', 'XeUtils'],
       output: {
         exports: "named",
         globals: {
