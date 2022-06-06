@@ -25,6 +25,7 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
         const target = mountComponent(TableViewEdit(), {
           currentConfig,
           row: {},
+          currentTableSymbol: currTableSymbol,
         });
 
         editFormDestroy.value = target.destroy;
@@ -43,6 +44,7 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
         const target = mountComponent(TableViewEdit(), {
           currentConfig,
           row,
+          currentTableSymbol: currTableSymbol,
         });
 
         editFormDestroy.value = target.destroy;

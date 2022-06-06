@@ -1,5 +1,12 @@
 import type { PropType, Ref, VNode, Component } from "vue";
-import { computed, defineComponent, inject, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import type { Dictionary, Config } from "@/config";
 import {
   ElButton,
@@ -25,6 +32,10 @@ export const TableViewEdit = () =>
         type: Object as PropType<Dictionary>,
         default: null,
       },
+      currentTableSymbol: {
+        type: Symbol,
+        required: true,
+      },
     },
     setup(props, { expose }) {
       const dialogVisible = ref(false);
@@ -34,7 +45,6 @@ export const TableViewEdit = () =>
       const form = ref<Dictionary>({});
       const formRef = ref();
       const rules = ref<Dictionary<FormItemRule | FormItemRule[]>>({});
-      const currTableSymbol = inject<symbol>("currTableSymbol");
       loadFormData();
 
       function loadFormData() {
@@ -171,6 +181,7 @@ export const TableViewEdit = () =>
             }
             ElMessage.success(text || "Success");
             cb && cb();
+            onSubmitSuccess();
           })
           .catch((res) => {
             const config = props.currentConfig?.value.buildInEditConfig;
@@ -178,22 +189,23 @@ export const TableViewEdit = () =>
             let cb: Function | undefined;
             if (isCreate.value) {
               text =
-                typeof config?.createFailTips === "function"
+                res instanceof Error
+                  ? res.message
+                  : typeof config?.createFailTips === "function"
                   ? config?.createFailTips(res)
                   : config?.createFailTips;
               cb = config?.onCreateFail;
             } else {
               text =
-                typeof config?.editFailTips === "function"
+                res instanceof Error
+                  ? res.message
+                  : typeof config?.editFailTips === "function"
                   ? config?.editFailTips(res)
                   : config?.editFailTips;
               cb = config?.onEditFail;
             }
             ElMessage.error(text || "Fail");
             cb && cb();
-          })
-          .finally(() => {
-            onSubmitSuccess();
           });
       }
 
@@ -216,24 +228,24 @@ export const TableViewEdit = () =>
         window.dispatchEvent(
           new CustomEvent("vue-table-view-edit-form-submit-finished", {
             detail: {
-              id: currTableSymbol,
+              id: props.currentTableSymbol,
             },
           })
         );
-        setTimeout(() => {
-          onCancel();
-        }, 500);
+        onCancel();
       }
 
       function onCancel() {
         dialogVisible.value = false;
-        window.dispatchEvent(
-          new CustomEvent("vue-table-view-destroy-edit-form", {
-            detail: {
-              id: currTableSymbol,
-            },
-          })
-        );
+        nextTick(() => {
+          window.dispatchEvent(
+            new CustomEvent("vue-table-view-destroy-edit-form", {
+              detail: {
+                id: props.currentTableSymbol,
+              },
+            })
+          );
+        });
       }
 
       onMounted(() => {
