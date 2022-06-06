@@ -1,6 +1,6 @@
 {
   "name": "vue-table-view-next",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "files": [
     "dist",
     "types",
