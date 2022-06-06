@@ -206,6 +206,7 @@ export const TableViewEdit = () =>
             }
             ElMessage.error(text || "Fail");
             cb && cb();
+            formLoading.value = false;
           });
       }
 
