@@ -7,12 +7,16 @@ import {
   provide,
   ref,
 } from "vue";
+import { ElConfigProvider } from "element-plus";
 import { TableViewHeader } from "./header";
 import { TableViewBody } from "./body";
 import { TableViewFooter } from "./TableViewFooter";
 import type { Config, Dictionary, PaginationData } from "@/config";
+import { AvailableLanguage } from "@/config";
 import { merge } from "lodash-es";
 import GlobalConfig from "@/utils/globalConfig";
+import en from "element-plus/es/locale/lang/en";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 
 const TableView = <Row, Search extends Dictionary>() =>
   defineComponent({
@@ -46,6 +50,11 @@ const TableView = <Row, Search extends Dictionary>() =>
         total: 0,
         pageAmount: 0,
       });
+      const langFile = ref(
+        GlobalConfig.globalConfig.language === AvailableLanguage.ZhCn
+          ? zhCn
+          : en
+      );
 
       provide("currTableSymbol", currTableSymbol);
       provide("loading", loading);
@@ -219,15 +228,17 @@ const TableView = <Row, Search extends Dictionary>() =>
           class="table-view"
           style={{ height: currentConfig?.value.height ?? "100%" }}
         >
-          <Header
-            ref={headerRef}
-            onDoSearch={getList}
-            onSearchChange={searchChange}
-            onExportData={exportData}
-            v-slots={headerSlots}
-          />
-          <Body ref={bodyRef} />
-          {currentConfig.value.usePagination && <Footer ref={footerRef} />}
+          <ElConfigProvider locale={langFile.value}>
+            <Header
+              ref={headerRef}
+              onDoSearch={getList}
+              onSearchChange={searchChange}
+              onExportData={exportData}
+              v-slots={headerSlots}
+            />
+            <Body ref={bodyRef} />
+            {currentConfig.value.usePagination && <Footer ref={footerRef} />}
+          </ElConfigProvider>
         </div>
       );
     },
