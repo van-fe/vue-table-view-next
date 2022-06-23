@@ -121,7 +121,6 @@ export default <
               <componentName.value
                 ref="component"
                 model-value={currentValue.value}
-                is={componentName.value}
                 info={props.info}
                 row={props.row}
                 instance-value={props.instanceValue}

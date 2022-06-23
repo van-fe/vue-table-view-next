@@ -12,11 +12,9 @@ import { TableViewHeader } from "./header";
 import { TableViewBody } from "./body";
 import { TableViewFooter } from "./TableViewFooter";
 import type { Config, Dictionary, PaginationData } from "@/config";
-import { AvailableLanguage } from "@/config";
 import { merge } from "lodash-es";
 import GlobalConfig from "@/utils/globalConfig";
-import en from "element-plus/es/locale/lang/en";
-import zhCn from "element-plus/es/locale/lang/zh-cn";
+import { getLocalFile } from "@/plugin/elementPlus";
 
 const TableView = <Row, Search extends Dictionary>() =>
   defineComponent({
@@ -50,11 +48,7 @@ const TableView = <Row, Search extends Dictionary>() =>
         total: 0,
         pageAmount: 0,
       });
-      const langFile = ref(
-        GlobalConfig.globalConfig.language === AvailableLanguage.ZhCn
-          ? zhCn
-          : en
-      );
+      const langFile = ref(getLocalFile(GlobalConfig.globalConfig.language));
 
       provide("currTableSymbol", currTableSymbol);
       provide("loading", loading);
@@ -228,7 +222,10 @@ const TableView = <Row, Search extends Dictionary>() =>
           class="table-view"
           style={{ height: currentConfig?.value.height ?? "100%" }}
         >
-          <ElConfigProvider locale={langFile.value}>
+          <ElConfigProvider
+            locale={langFile.value}
+            size={currentConfig.value.size ?? "default"}
+          >
             <Header
               ref={headerRef}
               onDoSearch={getList}
