@@ -215,6 +215,9 @@ const TableView = <Row, Search extends Dictionary>() =>
         toggleTree: (expand: boolean) => bodyRef.value?.toggleAllTree(expand),
         setAdvancedSearch,
         updateCurrEditForm,
+        headerRef,
+        bodyRef,
+        footerRef,
       });
 
       return () => (

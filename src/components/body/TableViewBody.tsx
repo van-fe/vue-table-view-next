@@ -137,6 +137,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
       expose({
         toggleAllTree: toggleTree,
         exportData: () => tableRef.value.exportData({ type: "csv" }),
+        tableRef,
       });
 
       const slots = {
