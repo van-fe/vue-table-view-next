@@ -26,6 +26,7 @@ class GlobalConfig {
     advancedSearchButtonsPosition: "first-line",
     advancedSearchFormColumnSpan: 6,
     advancedSearchFormColumnOffset: 0,
+    advancedSearchControlFormColumnSpan: 0,
     getListAtCreated: true,
     exportButtonText: "Export",
     usePagination: true,

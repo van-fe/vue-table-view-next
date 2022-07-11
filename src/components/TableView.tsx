@@ -185,7 +185,8 @@ const TableView = <Row, Search extends Dictionary>() =>
       });
 
       const headerSlots = {
-        buttons: () => slots.buttons?.(),
+        buttons: slots.buttons,
+        formControlsButtons: slots.formControlsButtons,
       };
 
       async function setAdvancedSearch(
@@ -210,6 +211,7 @@ const TableView = <Row, Search extends Dictionary>() =>
       expose({
         refreshList: getList,
         setListData,
+        create: () => headerRef.value?.create(),
         editRow: (row: Row) => headerRef.value?.editRow(row),
         switchLoading: (status: boolean) => (loading.value = status),
         toggleTree: (expand: boolean) => bodyRef.value?.toggleAllTree(expand),

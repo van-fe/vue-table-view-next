@@ -19,8 +19,8 @@ export const AdvancedSearch = <
 >() =>
   defineComponent({
     name: "AdvancedSearch",
-    emits: ["doSearch", "searchChange"],
-    setup(props, { emit, expose }) {
+    emits: ["doSearch", "searchChange", "exportData", "create"],
+    setup(props, { emit, expose, slots }) {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const defaultRequestParams = reactive<Dictionary>({});
       const search = ref<Dictionary>({});
@@ -31,32 +31,65 @@ export const AdvancedSearch = <
       search.value = cloneDeep(defaultRequestParams);
       emit("searchChange", search.value);
 
-      function createControllerFormItem(offset = 0): VNode {
+      const exportButtonRef = ref<typeof ElButton>();
+      async function exportData() {
+        emit("exportData");
+      }
+
+      function createControllerFormItem(restCol = 24): VNode {
         return (
           <ElCol
             class="search-button__wrapper"
-            span={currentConfig?.value.advancedSearchFormColumnSpan}
-            offset={
-              offset || currentConfig?.value.advancedSearchFormColumnOffset
+            span={
+              currentConfig?.value.advancedSearchControlFormColumnSpan ||
+              restCol - currentConfig!.value.advancedSearchFormColumnOffset!
             }
+            offset={currentConfig!.value.advancedSearchFormColumnOffset!}
           >
-            <ElFormItem label=".">
-              {currentConfig!.value.advancedSearchNeedExpand ? (
-                <ElButton type="text" onClick={doExpand}>
-                  {currentConfig!.value.expandButtonText}
-                  <ElIcon class="el-icon--right">
-                    <ArrowDown />
-                  </ElIcon>
-                </ElButton>
-              ) : (
-                ""
-              )}
-              <ElButton type="primary" native-type="submit">
-                {currentConfig!.value.searchButtonText}
-              </ElButton>
-              <ElButton type="primary" plain onClick={doReset}>
-                {currentConfig!.value.resetSearchButtonText}
-              </ElButton>
+            <ElFormItem labelWidth={0}>
+              {{
+                label: () => <span />,
+                default: () => (
+                  <>
+                    {slots.formControlsButtons?.()}
+                    {currentConfig?.value.useBuildInCreate ? (
+                      <ElButton type="primary" onClick={() => emit("create")}>
+                        {currentConfig?.value.buildInCreateButtonText ||
+                          "Create"}
+                      </ElButton>
+                    ) : undefined}
+                    {currentConfig!.value.advancedSearchNeedExpand &&
+                      (currentConfig?.value.useAdvancedSearch ?? true) && (
+                        <ElButton type="text" onClick={doExpand}>
+                          {currentConfig!.value.expandButtonText}
+                          <ElIcon class="el-icon--right">
+                            <ArrowDown />
+                          </ElIcon>
+                        </ElButton>
+                      )}
+                    {currentConfig?.value.useExport ? (
+                      <ElButton
+                        ref={exportButtonRef}
+                        type="primary"
+                        onClick={exportData}
+                        {...(currentConfig?.value?.exportButtonProps ?? {})}
+                      >
+                        {currentConfig?.value.exportButtonText || "Export"}
+                      </ElButton>
+                    ) : undefined}
+                    {(currentConfig?.value.useAdvancedSearch ?? true) && (
+                      <>
+                        <ElButton type="primary" native-type="submit">
+                          {currentConfig!.value.searchButtonText}
+                        </ElButton>
+                        <ElButton type="primary" plain onClick={doReset}>
+                          {currentConfig!.value.resetSearchButtonText}
+                        </ElButton>
+                      </>
+                    )}
+                  </>
+                ),
+              }}
             </ElFormItem>
           </ElCol>
         );
@@ -120,6 +153,7 @@ export const AdvancedSearch = <
               count +
               (currentConfig.value.advancedSearchFormColumnSpan! +
                 currentConfig.value.advancedSearchFormColumnOffset!);
+
             if (subtract >= 24) {
               hasInserted = true;
               results.splice(i, 0, createControllerFormItem());
@@ -136,14 +170,7 @@ export const AdvancedSearch = <
           }
 
           if (!hasInserted) {
-            results.push(
-              createControllerFormItem(
-                24 -
-                  count -
-                  (currentConfig.value.advancedSearchFormColumnSpan! +
-                    currentConfig.value.advancedSearchFormColumnOffset!)
-              )
-            );
+            results.push(createControllerFormItem(24 - count));
           }
         } else {
           let count = 0;
@@ -160,17 +187,19 @@ export const AdvancedSearch = <
               (item.colOffset ||
                 currentConfig!.value.advancedSearchFormColumnOffset ||
                 0);
-
-            if (count === 24) {
-              count = 0;
-            }
           }
+
+          count %= 24;
+          const restSpan = 24 - count;
+
           results.push(
             createControllerFormItem(
-              24 -
-                count -
-                (currentConfig!.value.advancedSearchFormColumnSpan! +
-                  currentConfig!.value.advancedSearchFormColumnOffset!)
+              restSpan +
+                (currentConfig?.value.advancedSearchControlFormColumnSpan ||
+                  currentConfig!.value.advancedSearchFormColumnSpan!) >
+                24
+                ? 24
+                : restSpan
             )
           );
         }

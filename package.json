@@ -1,6 +1,6 @@
 {
   "name": "vue-table-view-next",
-  "version": "0.0.13",
+  "version": "0.1.0",
   "files": [
     "dist",
     "types",
@@ -26,11 +26,11 @@
     "build:types": "rm -rf types && vue-tsc -d --emitDeclarationOnly --declarationDir ./types"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^1.1.4",
-    "element-plus": "^2.1.11",
+    "@element-plus/icons-vue": "^2.0.6",
+    "element-plus": "^2.2.9",
     "lodash-es": "^4.17.21",
-    "vue": "^3.2.33",
-    "vxe-table": "^4.2.2",
+    "vue": "^3.2.37",
+    "vxe-table": "^4.2.3",
     "xe-utils": "^3.5.4"
   },
   "devDependencies": {
@@ -59,8 +59,8 @@
     "unplugin-auto-import": "^0.6.8",
     "unplugin-element-plus": "^0.3.3",
     "unplugin-vue-components": "^0.18.5",
-    "vite": "^2.9.8",
+    "vite": "^2.9.13",
     "vite-plugin-style-import": "^1.4.1",
-    "vue-tsc": "^0.34.11"
+    "vue-tsc": "^0.38.3"
   }
 }

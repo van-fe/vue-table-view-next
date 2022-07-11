@@ -60,6 +60,7 @@ export interface InsideGlobalConfig {
   advancedSearchDefaultHeight: string;
   advancedSearchButtonsPosition: "first-line" | "last-line"; // first-line
   advancedSearchFormColumnSpan: number; // 4
+  advancedSearchControlFormColumnSpan: number; // 4
   advancedSearchFormColumnOffset: number; // 2
   getListAtCreated: boolean;
   emptyText: string;
@@ -164,6 +165,7 @@ export interface InsideConfig<
   advancedSearchLabelPosition: "left" | "right" | "top"; // right
   advancedSearchButtonsPosition: "first-line" | "last-line"; // first-line
   advancedSearchFormColumnSpan: number; // 4
+  advancedSearchControlFormColumnSpan: number; // 4
   advancedSearchFormColumnOffset: number; // 2
   advancedSearch: AdvancedSearchType<Search, Row>[];
   advancedSearchDefaultHeight: string;

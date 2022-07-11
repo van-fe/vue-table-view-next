@@ -282,6 +282,7 @@ export const TableViewEdit = () =>
                 props.currentConfig?.value.buildInEditConfig
                   ?.formLabelPosition ?? "right"
               }
+              validate-on-rule-change={false}
               size={props.currentConfig?.value.buildInEditConfig?.formSize}
             >
               <>{...createControllerFormItem()}</>
@@ -315,6 +316,7 @@ export const TableViewEdit = () =>
           }
           customClass="vue-table-view-edit-dialog"
           destroyOnClose={true}
+          append-to-body={true}
           beforeClose={onCancel}
         />
       );

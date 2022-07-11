@@ -10,6 +10,7 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
   defineComponent({
     name: "TableViewHeader",
     emits: ["doSearch", "searchChange", "exportData"],
+    slots: ["buttons"],
     setup(props, { emit, slots, expose }) {
       const currentConfig = inject<Ref<Config<Row, Search>>>("currentConfig");
       const Tag = AdvancedSearch<Row, Search>();
@@ -98,6 +99,7 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
       });
 
       expose({
+        create,
         editRow,
         setAdvancedSearch,
         updateCurrEditForm,
@@ -105,7 +107,8 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
 
       return () => (
         <div class="table-view__header">
-          {currentConfig?.value.useAdvancedSearch === false ? undefined : (
+          {((currentConfig?.value.useAdvancedSearch ?? true) ||
+            slots.formControlsButtons) && (
             <Tag
               ref={advancedSearch}
               style={{
@@ -114,26 +117,31 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
               }}
               onDoSearch={() => emit("doSearch")}
               onSearchChange={(val: Search) => emit("searchChange", val)}
-            />
+              onCreate={create}
+              onExportData={exportData}
+            >
+              {{ formControlsButtons: slots.formControlsButtons }}
+            </Tag>
           )}
           <div class="table-view__header-toolbar">
-            {currentConfig?.value.useBuildInCreate ? (
+            {currentConfig?.value.useBuildInCreate &&
+            currentConfig?.value.useAdvancedSearch === false ? (
               <ElButton type="primary" onClick={create}>
                 {currentConfig?.value.buildInCreateButtonText || "Create"}
               </ElButton>
             ) : undefined}
 
-            {currentConfig?.value.useExport ? (
-              <ElButton
-                ref={exportButtonRef}
-                type="primary"
-                onClick={exportData}
-                {...(currentConfig?.value?.exportButtonProps ?? {})}
-              >
-                {currentConfig?.value.exportButtonText || "Export"}
-              </ElButton>
-            ) : undefined}
-
+            {currentConfig?.value.useExport &&
+              currentConfig?.value.useAdvancedSearch === false && (
+                <ElButton
+                  ref={exportButtonRef}
+                  type="primary"
+                  onClick={exportData}
+                  {...(currentConfig?.value?.exportButtonProps ?? {})}
+                >
+                  {currentConfig?.value.exportButtonText || "Export"}
+                </ElButton>
+              )}
             {slots.buttons?.()}
           </div>
         </div>
