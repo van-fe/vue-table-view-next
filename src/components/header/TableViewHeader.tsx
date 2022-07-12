@@ -60,12 +60,12 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
         editFormInstance.value.updateCurrEditForm(form);
       }
 
-      const exportButtonRef = ref<typeof ElButton>();
+      const exportButtonRef = ref<typeof ElButton & HTMLElement>();
       async function exportData() {
         if (currentConfig?.value.exportUseBuildInMethod === false) {
           if (typeof currentConfig?.value.onClickExport === "function") {
             const exportButtonLoadingInstance = ElLoading.service({
-              target: exportButtonRef.value!.ref as unknown as HTMLElement,
+              target: exportButtonRef.value,
             });
             await currentConfig?.value.onClickExport(searchValueBuildFunc());
             exportButtonLoadingInstance.close();
