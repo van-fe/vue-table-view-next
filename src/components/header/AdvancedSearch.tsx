@@ -265,7 +265,9 @@ export const AdvancedSearch = <
             // @ts-ignore
             onSubmit={doSearch}
           >
-            <ElRow gutter={10}>{...chunkFormItems()}</ElRow>
+            <ElRow gutter={currentConfig?.value.advancedSearchFormRowGutter}>
+              {...chunkFormItems()}
+            </ElRow>
           </ElForm>
         </div>
       );

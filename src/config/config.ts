@@ -62,6 +62,7 @@ export interface InsideGlobalConfig {
   advancedSearchFormColumnSpan: number; // 4
   advancedSearchControlFormColumnSpan: number; // 4
   advancedSearchFormColumnOffset: number; // 2
+  advancedSearchFormRowGutter: number; // 10
   getListAtCreated: boolean;
   emptyText: string;
   emptyRender?: () => JSX.Element;
@@ -167,6 +168,7 @@ export interface InsideConfig<
   advancedSearchFormColumnSpan: number; // 4
   advancedSearchControlFormColumnSpan: number; // 4
   advancedSearchFormColumnOffset: number; // 2
+  advancedSearchFormRowGutter: number; // 10
   advancedSearch: AdvancedSearchType<Search, Row>[];
   advancedSearchDefaultHeight: string;
 }
