@@ -1,11 +1,13 @@
 {
   "name": "vue-table-view-next",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "files": [
     "dist",
     "types",
     "README.md",
-    "package.json"
+    "package.json",
+    "tsconfig.json",
+    "tsconfig.node.json"
   ],
   "main": "./dist/vue-table-view-next.umd.js",
   "module": "./dist/vue-table-view-next.es.js",
