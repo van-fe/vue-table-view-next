@@ -103,6 +103,7 @@ export const TableViewHeader = <Row, Search extends Dictionary>() =>
         editRow,
         setAdvancedSearch,
         updateCurrEditForm,
+        exportData,
       });
 
       return () => (

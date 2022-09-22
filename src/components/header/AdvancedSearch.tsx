@@ -12,6 +12,7 @@ import {
 } from "element-plus";
 import { FormItemComponent } from "@/components/form";
 import { ArrowDown } from "@element-plus/icons-vue";
+import Export from "@/assets/icon/export.svg";
 
 export const AdvancedSearch = <
   Row extends Dictionary,
@@ -51,6 +52,21 @@ export const AdvancedSearch = <
                 label: () => <span />,
                 default: () => (
                   <>
+                    {currentConfig?.value.useExport ? (
+                      <ElButton
+                        ref={exportButtonRef}
+                        text
+                        onClick={exportData}
+                        {...(currentConfig?.value?.exportButtonProps ?? {})}
+                      >
+                        <img
+                          src={Export}
+                          alt="export icon"
+                          style={{ marginRight: "10px" }}
+                        />
+                        {currentConfig?.value.exportButtonText || "Export"}
+                      </ElButton>
+                    ) : undefined}
                     {slots.formControlsButtons?.()}
                     {currentConfig?.value.useBuildInCreate ? (
                       <ElButton type="primary" onClick={() => emit("create")}>
@@ -67,23 +83,13 @@ export const AdvancedSearch = <
                           </ElIcon>
                         </ElButton>
                       )}
-                    {currentConfig?.value.useExport ? (
-                      <ElButton
-                        ref={exportButtonRef}
-                        type="primary"
-                        onClick={exportData}
-                        {...(currentConfig?.value?.exportButtonProps ?? {})}
-                      >
-                        {currentConfig?.value.exportButtonText || "Export"}
-                      </ElButton>
-                    ) : undefined}
                     {(currentConfig?.value.useAdvancedSearch ?? true) && (
                       <>
-                        <ElButton type="primary" native-type="submit">
-                          {currentConfig!.value.searchButtonText}
-                        </ElButton>
                         <ElButton type="primary" plain onClick={doReset}>
                           {currentConfig!.value.resetSearchButtonText}
+                        </ElButton>
+                        <ElButton type="primary" native-type="submit">
+                          {currentConfig!.value.searchButtonText}
                         </ElButton>
                       </>
                     )}

@@ -218,6 +218,9 @@ const TableView = <Row, Search extends Dictionary>() =>
         setAdvancedSearch,
         updateCurrEditForm,
         getCurrentSearchValue: buildSearchValue,
+        exportData: () => {
+          headerRef.value?.exportData();
+        },
         headerRef,
         bodyRef,
         footerRef,
