@@ -1,5 +1,5 @@
 {
-  "name": "@nio-fe/vue-table-view-next",
+  "name": "vue-table-view-next",
   "version": "0.1.0-beta.6",
   "files": [
     "dist",

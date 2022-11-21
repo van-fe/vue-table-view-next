@@ -13,6 +13,7 @@ import type {
 import type { OperationConfig } from "./operation";
 import type { EditConfig } from "@/config/edit";
 import type { ButtonProps } from "element-plus";
+import type { VXETableGlobalConfig } from "vxe-table";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface,@typescript-eslint/no-unused-vars
 export interface CustomListDataWrapper<Row> {}
@@ -75,6 +76,7 @@ export interface InsideGlobalConfig {
   usePagination: boolean; // true
   exportButtonText: string;
   exportButtonProps: Partial<ButtonProps>;
+  extraConfig: Partial<VXETableGlobalConfig>;
 }
 
 export type GlobalConfigType = Partial<InsideGlobalConfig>;
@@ -171,6 +173,11 @@ export interface InsideConfig<
   advancedSearchFormRowGutter: number; // 10
   advancedSearch: AdvancedSearchType<Search, Row>[];
   advancedSearchDefaultHeight: string;
+
+  /**
+   * vxe-table config
+   */
+  extraConfig: Partial<VXETableGlobalConfig>;
 }
 
 export type Config<

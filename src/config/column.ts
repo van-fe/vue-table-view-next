@@ -1,6 +1,6 @@
 import type { Align, Fixed } from "./common";
 import type { ColumnCallbackParams } from "./vxe-table";
-import type { VxeColumnPropTypes } from "vxe-table";
+import type { VxeColumnPropTypes, VxeColumnProps } from "vxe-table";
 
 export type ColumnFormat<Row> = (curr: any, row: Row) => string;
 
@@ -35,8 +35,13 @@ export interface Column<Row, Field extends keyof Row = keyof Row> {
    */
   format?: ColumnFormat<Row>;
 
-  /**s
+  /**
    * custom render-content
    */
   renderContent?: ColumnRender<Row>;
+
+  /**
+   * vxe-column config
+   */
+  extraConfig?: Partial<VxeColumnProps>;
 }

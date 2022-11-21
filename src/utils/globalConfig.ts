@@ -48,6 +48,7 @@ class GlobalConfig {
     },
     paginationPosition: "center",
     exportButtonProps: {},
+    extraConfig: {},
   };
 
   public get globalConfig(): InsideGlobalConfig {

@@ -63,6 +63,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
               formatter={(params: ColumnFormatterParam) =>
                 columnFormatter(params, column)
               }
+              {...(column.extraConfig || {})}
             />
           );
         });
@@ -166,6 +167,7 @@ export const TableViewBody = <Row, Search extends Dictionary>() =>
             onCheckboxAll={onCheckAll}
             onRadioChange={onRadioChange}
             onCheckboxChange={onCheckboxChange}
+            {...(currentConfig?.value.extraConfig || {})}
           >
             {...specialColumnRender()}
             {columnRender()}
